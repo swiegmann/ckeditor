@@ -9,10 +9,10 @@
 		public function about() {
 			return array(
 				'name' => 'Text Formatter: CKEditor',
-				'version' => '1.00',
-				'release-date' => '2010-10-07',
+				'version' => '1.1',
+				'release-date' => '2010-11-15',
 				'author' => array(
-					'name' => '<a href="http://thecocoabots.com">Tony Arnold</a> / <a href="http://www.gielberkers.com">Giel Berkers</a>'
+					'name'     => '<a href="http://thecocoabots.com">Tony Arnold</a>, <a href="http://gielberkers.com">Giel Berkers</a>'
 				),
 				'description' => 'Includes CKEditor, a web-based XHTML editor developed by Frederico Knabben. It also has an integrated file browser which uses Symphony sections to get it\'s files from.'
 			);
@@ -49,8 +49,8 @@
 			$wrapper = $context['wrapper'];
 			
 			$fieldset = new XMLElement('fieldset', '', array('class'=>'settings'));
-			$fieldset->appendChild(new XMLElement('legend', __('CKEditor')));
-			$fieldset->appendChild(new XMLElement('p', __('The following sections are allowed in the file manager of CKEditor:')));
+			$fieldset->appendChild(new XMLElement('legend', __('CKEditor File Browser')));
+			$fieldset->appendChild(new XMLElement('p', __('Please select the sections that are permitted to use the CKEditor file browser:')));
 			
 			$sectionManager = new SectionManager($this);
 			$sections = $sectionManager->fetch();
@@ -69,7 +69,7 @@
 				$label->appendChild(new XMLElement('input', $section->get('name'), $attributes));
 				$fieldset->appendChild($label);
 			}
-			
+
 			$wrapper->appendChild($fieldset);
 		}
 		

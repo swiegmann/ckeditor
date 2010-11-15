@@ -6,8 +6,8 @@ jQuery(document).ready(function () {
         var configurationData = {
             language : 'en',            
             height : this.offsetHeight,
-            extraPlugins : 'uicolor,xmlentities',
             removePlugins : 'font,entities,styles',
+            extraPlugins : 'xmlentities',
             uiColor : '#d6d6c7',
             startupOutlineBlocks : true,
             replaceByClassEnabled : false,

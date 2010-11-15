@@ -1,11 +1,11 @@
 # CKEditor for Symphony CMS
 
- * Version: 1.00 beta
- * CKEditor version: 3.4.1
- * Date: 07-10-2010
- * Authors: Tony Arnold <tony@tonyarnold.com>, Giel Berkers <info@gielberkers.com>
- * Repository: <http://github.com/tonyarnold/symphony-ckeditor/>, <http://github.com/kanduvisla/symphony-ckeditor/>
- * Requirements: Symphony CMS 2.0.8 <http://github.com/symphony/symphony-2/tree/master>
+ * Version: 1.1
+ * CKEditor version: 3.4.2
+ * Date: 15-11-2010
+ * Authors: Tony Arnold <tony@thecocoabots.com>, Giel Berkers <info@gielberkers.com>
+ * Repository: <http://github.com/kanduvisla/symphony-ckeditor/>
+ * Requirements: Symphony CMS 2.1.0 or higher <http://github.com/symphony/symphony-2/tree/master>
 
 ## Introduction
 
@@ -14,11 +14,20 @@ For further information about the editor please visit [www.ckeditor.com](http://
 
 It is based upon code found in [Nils H&ouml;rrmann's WYMEditor](http://github.com/nilshoerrmann/wymeditor).
 
+## Contributors
+
+Significant work and bug fixes have been contributed by the following users:
+
+ * Giel Berkers - <http://github.com/kanduvisla> contributed major clean-ups and a new Symphony file browser that is compatible with CKEditor;
+ * Rob Stanford - contributed bug fixes.
+ 
+For full details, please see the Github commit log - <http://github.com/tonyarnold/symphony-ckeditor/commits/master>.
+
 ## Special notes
 
-The version of CKEditor is stripped down to the bare essentials. This means:
+The version of CKEditor included with this Symphony extension is stripped down to the bare essentials. This means:
 
- * Text formatting is limited to the following functionality:
+ * Text formatting is limited to the following functions:
    * Paragraph Format
    * Bold
    * Italic
@@ -31,13 +40,13 @@ The version of CKEditor is stripped down to the bare essentials. This means:
    * Horizontal rule
    * View source
    * Full screen
- * **All other plugins are removed!**; if you wish to make use of more functionality, download the original version of [CKEditor](http://ckeditor.com) and extract the plugins needed from their package.
- * **All languages other then English are removed!**; if you wish to have additional languages, download the original version of [CKEditor](http://ckeditor.com) and extract the languages needed from their package.
+ * *Most of CKEditor's plug-ins have been removed*: if you wish to add more plug-ins, please download the original [CKEditor](http://ckeditor.com) package and extract the plugins you'd like to include.
+ * *All languages other than US English are removed*: If you wish to make use of additional languages, please download the original version of [CKEditor](http://ckeditor.com) and extract the languages you'd like to include.
 
 ## Built-in file browser
 
-The editor comes with a built-in file browser which uses sections to get their files from. This works as follows:
+This Symphony extension comes with a built-in file browser that is compatible with CKEditor. This file browser uses Symphony sections to store and retrieve uploaded files. It works as follows:
 
- * Make sure you have a section for your downloads, with at least one field of the type 'File Upload'.
- * Select this section (and perhaps some more) in your preferences panel to be available for CKEditor.
- * Now if you use the 'browse server'-button in CKEditor, you can select your section and the specific entry/file to insert in your text. You can also add new entries with the file manager on the fly!
+ * Make sure you have created at least one section for your uploaded files with a 'File Upload' field attached;
+ * Go to Symphony's System Preferences and make the CKEditor file browser available to one or more of your sections;
+ * Once you've enabled the file browser for at least one of your sections, you make use of the 'Browse Server' button in CKEditor to select existing files from within your section and add them to the entry you are editing. You can also upload new files using the file browser on the fly!
