@@ -1,3 +1,7 @@
+if (typeof Symphony.ADMIN == "undefined") {
+	Symphony.ADMIN = window.location.toString().match(/^(.+\/symphony)/)[1];
+}
+
 jQuery(document).ready(function () {
     var count = 0;
     
@@ -23,7 +27,7 @@ jQuery(document).ready(function () {
             ],
             forcePasteAsPlainText: true,
             format_tags: 'p;h1;h2;h3',
-            filebrowserBrowseUrl: '/symphony/extension/ckeditor/filebrowser/'
+            filebrowserBrowseUrl: Symphony.ADMIN + '/extension/ckeditor/filebrowser/'
         };
 		
 		// Do not add linebreaks and spaces after opening and before closing tags.

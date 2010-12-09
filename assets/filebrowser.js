@@ -1,13 +1,23 @@
 var funcNum;
 var urlNew;
 
+if (typeof Symphony == "undefined") {
+	var Symphony = {};
+}
+if (typeof Symphony.WEBSITE == "undefined") {
+	Symphony.WEBSITE = window.location.toString().match(/^(.+?)\/symphony/)[1];
+}
+if (typeof Symphony.ADMIN == "undefined") {
+	Symphony.ADMIN = Symphony.WEBSITE + "/symphony";
+}
+
 $(function(){
 	funcNum = getUrlParam('CKEditorFuncNum');
 
 	$("div.left a").click(function(){
 		$("div.left a").removeClass("active");
 		$(this).addClass("active");
-		loadRightPanel("/symphony/extension/ckeditor/filebrowserajax/?id=" + $(this).attr("id"));
+		loadRightPanel(Symphony.ADMIN + "/extension/ckeditor/filebrowserajax/?id=" + $(this).attr("id"));
 		return false;
 	});
 	
@@ -55,7 +65,7 @@ function loadRightPanel(url)
 			$("td.image").hover(function(){
 				$("#thumb").show();
 				var img = $("a", this).attr("href").replace('/workspace/', '');
-				$("#thumb").html('<img src="/image/2/80/60/5/' + img + '" width="80" height="60" />');
+				$("#thumb").html('<img src="' + Symphony.WEBSITE + '/image/2/80/60/5/' + img + '" width="80" height="60" />');
 			}, function(){
 				$("#thumb").hide();
 			});
@@ -72,7 +82,7 @@ function buildForm(data)
 	$("div.right form").append('<input type="button" name="cancel" value="Cancel" />');
 	$("div.right form").append('<input type="submit" name="action[save]" value="Submit" />');
 	$("input[name='cancel']").click(function(){
-		loadRightPanel("/symphony/extension/ckeditor/filebrowserajax/?id=" + $("div.left a.active").attr("id"));
+		loadRightPanel(Symphony.ADMIN + "/extension/ckeditor/filebrowserajax/?id=" + $("div.left a.active").attr("id"));
 	});
 	// Ajax form:
 	$("div.right form").ajaxForm({
@@ -84,7 +94,7 @@ function buildForm(data)
 				buildForm(responseText);
 			} else {
 				// No error found! Content stored!
-				loadRightPanel("/symphony/extension/ckeditor/filebrowserajax/?id=" + $("div.left a.active").attr("id"));
+				loadRightPanel(Symphony.ADMIN + "/extension/ckeditor/filebrowserajax/?id=" + $("div.left a.active").attr("id"));
 			}		
 		}
 	});
