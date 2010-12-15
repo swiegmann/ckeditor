@@ -59,17 +59,21 @@
 			$data = @file_get_contents(MANIFEST.'/ckeditor_sections');
 			$checkedSections = $data != false ? explode(',', $data) : array();
 			
-			foreach($sections as $section)
+			// Bugfix for if there are no sections found:
+			if($sections)
 			{
-				$label = new XMLElement('label');
-				$attributes = array('type'=>'checkbox', 'name'=>'ckeditor_sections[]', 'value'=>$section->get('id'));
-				if(in_array($section->get('id'), $checkedSections)) {
-					$attributes['checked'] = 'checked';
+				foreach($sections as $section)
+				{
+					$label = new XMLElement('label');
+					$attributes = array('type'=>'checkbox', 'name'=>'ckeditor_sections[]', 'value'=>$section->get('id'));
+					if(in_array($section->get('id'), $checkedSections)) {
+						$attributes['checked'] = 'checked';
+					}
+					$label->appendChild(new XMLElement('input', $section->get('name'), $attributes));
+					$fieldset->appendChild($label);
 				}
-				$label->appendChild(new XMLElement('input', $section->get('name'), $attributes));
-				$fieldset->appendChild($label);
 			}
-
+			
 			$wrapper->appendChild($fieldset);
 		}
 		
