@@ -10,7 +10,7 @@
 			return array(
 				'name' => 'Text Formatter: CKEditor',
 				'version' => '1.1',
-				'release-date' => '2010-11-15',
+				'release-date' => '2010-12-20',
 				'author' => array(
 					'name'     => '<a href="http://thecocoabots.com">Tony Arnold</a>, <a href="http://gielberkers.com">Giel Berkers</a>'
 				),

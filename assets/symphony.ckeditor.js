@@ -3,10 +3,17 @@ if (typeof Symphony.ADMIN == "undefined") {
 }
 
 jQuery(document).ready(function () {
-    var count = 0;
-    
+	
+	// See if there are any ckeditor textareas:
     jQuery('label > textarea.ckeditor').each(function(index) {
-        var objectName = jQuery(this).attr('name');    
+		
+		// Disable replacing by class:
+		CKEDITOR.replaceByClassEnabled = false;
+		
+		// Set the objectname:
+        var objectName = jQuery(this).attr('name');
+		
+		// Set the configurationdata:
         var configurationData = {
             language : 'en',            
             height : this.offsetHeight,
@@ -45,7 +52,9 @@ jQuery(document).ready(function () {
 			}
 		});
 		
-        CKEDITOR.replaceByClassEnabled = false;
+		
+		
+		// Replace CKEditor instances:
         CKEDITOR.replace(objectName, configurationData);
     });
 });
