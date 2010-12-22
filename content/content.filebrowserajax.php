@@ -43,6 +43,7 @@
 					$fieldIDs = array();
 					foreach($columns as $column)
 					{
+						// The correct order:
 						array_push($fieldIDs, $column->get('id'));
 						$headers->appendChild(new XMLElement('th', $column->get('label')));
 					}
@@ -56,8 +57,10 @@
 						$fileFound = false;
 						$row = new XMLElement('tr');
 						$data = $entry->getData();
-						foreach($data as $id => $info)
+						
+						foreach($fieldIDs as $id)
 						{
+							$info = $data[$id];
 							if(in_array($id, $fieldIDs)) {
 								$attributes = array();
 								if(isset($info['file'])) {
@@ -72,7 +75,7 @@
 									}									
 									$fileFound = true;
 								} elseif(isset($info['value'])) {
-									$value = $info['value'];
+									$value = $info['value'];									
 								} elseif(isset($info['handle'])) {
 									$value = $info['handle'];
 								} else {

@@ -21,6 +21,9 @@ $(function(){
 		return false;
 	});
 	
+	// Default: activate the first category:
+	$("div.left a:first").click();
+	
 	if(jitAvailable)
 	{
 		$(document).mousemove(function(e){
@@ -34,7 +37,7 @@ $(function(){
 
 function loadRightPanel(url)
 {
-	$("div.right").load(url + " form>*", function(){
+	$("div.right").load(url/*+ " form>*"*/, function(){
 		// some magic mumbo jumbo:
 		// Hover on the table rows:
 		$("div.right tr").hover(function(){
