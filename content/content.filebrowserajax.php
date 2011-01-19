@@ -20,7 +20,7 @@
 			}
 			
 			$this->Html->setDTD('<!DOCTYPE html>');
-			$this->Html->setAttribute('lang', Symphony::lang());
+			// $this->Html->setAttribute('lang', Symphony::lang());  // Threw an error in S2.2 beta 2
 			$this->addElementToHead(new XMLElement('meta', NULL, array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=UTF-8')), 0);
 			$this->addHeaderToPage('Content-Type', 'text/html; charset=UTF-8');
 			

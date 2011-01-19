@@ -20,7 +20,9 @@
 			}
 			
 			$this->Html->setDTD('<!DOCTYPE html>');
-			$this->Html->setAttribute('lang', Symphony::lang());
+			
+			// $this->Html->setAttribute('lang', Symphony::lang());  // threw an error in s2.2 beta2
+			
 			$this->addElementToHead(new XMLElement('meta', NULL, array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=UTF-8')), 0);
 			$this->addStylesheetToHead(URL . '/symphony/assets/forms.css', 'screen', 69);
 			$this->addStylesheetToHead(URL . '/extensions/ckeditor/assets/filebrowser.css', 'screen', 70);
