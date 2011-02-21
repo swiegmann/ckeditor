@@ -27,9 +27,11 @@ $(function(){
 	if(jitAvailable)
 	{
 		$(document).mousemove(function(e){
-			if(document.getElementById("thumb").style.display != 'none')
-			{
-				$("#thumb").css({left: e.pageX + 50, top: e.pageY});
+			if(document.getElementById("thumb")) {
+				if(document.getElementById("thumb").style.display != 'none')
+				{
+					$("#thumb").css({left: e.pageX + 50, top: e.pageY});
+				}
 			}
 		});
 	}

@@ -13,12 +13,16 @@ jQuery(document).ready(function () {
 		// Set the objectname:
         var objectName = jQuery(this).attr('name');
 		
+		// Fix for IE:
+		var objectWidth = jQuery(this).width();
+		
 		// Set the configurationdata:
         var configurationData = {
+			width : objectWidth,
             language : 'en',            
             height : this.offsetHeight,
             removePlugins : 'font,entities,styles',
-            extraPlugins : 'xmlentities',
+            extraPlugins : 'xmlentities,youtube',
             uiColor : '#d6d6c7',
             startupOutlineBlocks : true,
             replaceByClassEnabled : false,
@@ -30,7 +34,7 @@ jQuery(document).ready(function () {
                 ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
                 ['Image'],['Link', 'Unlink'],
                 ['HorizontalRule'],
-                ['Source', 'Maximize']
+                ['Source', 'Maximize'],['Youtube']
             ],
             forcePasteAsPlainText: true,
             format_tags: 'p;h1;h2;h3',
@@ -51,8 +55,6 @@ jQuery(document).ready(function () {
 					});
 			}
 		});
-		
-		
 		
 		// Replace CKEditor instances:
         CKEDITOR.replace(objectName, configurationData);
