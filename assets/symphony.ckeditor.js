@@ -22,7 +22,7 @@ jQuery(document).ready(function () {
             language : 'en',            
             height : this.offsetHeight,
             removePlugins : 'font,entities,styles',
-            extraPlugins : 'xmlentities,youtube',
+            extraPlugins : 'xmlentities',
             uiColor : '#d6d6c7',
             startupOutlineBlocks : true,
             replaceByClassEnabled : false,
