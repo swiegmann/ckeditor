@@ -9,8 +9,8 @@
 		public function about() {
 			return array(
 				'name' => 'Text Formatter: CKEditor',
-				'version' => '1.1',
-				'release-date' => '2010-12-20',
+				'version' => '1.2',
+				'release-date' => '2011-02-25',
 				'author' => array(
 					'name'     => '<a href="http://thecocoabots.com">Tony Arnold</a>, <a href="http://gielberkers.com">Giel Berkers</a>'
 				),
@@ -56,22 +56,18 @@
 			$sections = $sectionManager->fetch();
 			
 			// Check which sections are allowed:
-			$data = @file_get_contents(MANIFEST.'/ckeditor_sections');
+			$data = Symphony::Configuration()->get('sections', 'ckeditor');
 			$checkedSections = $data != false ? explode(',', $data) : array();
 			
 			// Bugfix for if there are no sections found:
 			if($sections)
 			{
+				$options = array();
 				foreach($sections as $section)
 				{
-					$label = new XMLElement('label');
-					$attributes = array('type'=>'checkbox', 'name'=>'ckeditor_sections[]', 'value'=>$section->get('id'));
-					if(in_array($section->get('id'), $checkedSections)) {
-						$attributes['checked'] = 'checked';
-					}
-					$label->appendChild(new XMLElement('input', $section->get('name'), $attributes));
-					$fieldset->appendChild($label);
+					$options[] = array($section->get('id'), in_array($section->get('id'), $checkedSections), $section->get('name'));
 				}
+				$fieldset->appendChild(Widget::Select('ckeditor_sections[]', $options, array('multiple'=>'multiple')));
 			}
 			
 			$wrapper->appendChild($fieldset);
@@ -84,7 +80,9 @@
 		{
 			if(isset($_POST['ckeditor_sections'])) {				
 				$sectionStr = implode(',', $_POST['ckeditor_sections']);
-				file_put_contents(MANIFEST.'/ckeditor_sections', $sectionStr);
+				// file_put_contents(MANIFEST.'/ckeditor_sections', $sectionStr);
+				Symphony::Configuration()->set('sections', $sectionStr, 'ckeditor');
+				Administration::instance()->saveConfig();
 			} else {
 				// If no sections are selected, delete the file:
 				$this->uninstall();
@@ -96,10 +94,8 @@
 		 */
 		public function uninstall()
 		{
-			if(file_exists(MANIFEST.'/ckeditor_sections'))
-			{
-				unlink(MANIFEST.'/ckeditor_sections');
-			}
+			Symphony::Configuration()->remove('sections', 'ckeditor');
+			Administration::instance()->saveConfig();
 		}
 		
 		/**

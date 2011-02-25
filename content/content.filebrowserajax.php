@@ -1,31 +1,29 @@
 <?php
-	require_once(TOOLKIT . '/class.administrationpage.php');
+	require_once(TOOLKIT . '/class.htmlpage.php');
 	require_once(TOOLKIT . '/class.sectionmanager.php');
 	require_once(TOOLKIT . '/class.entrymanager.php');
 
-	Class contentExtensionCkeditorFilebrowserajax extends AdministrationPage
+	Class contentExtensionCkeditorFilebrowserajax extends HTMLPage
 	{
 		function __construct(&$parent){
-			parent::__construct($parent);
-			$this->setTitle('Symphony - File Browser for CKEditor');
+			parent::__construct($parent);			
 		}
 		
-		function build()
+		function build($context)
 		{
-			$this->_context = $context;
+			$this->setTitle('Symphony - File Browser for CKEditor');
 			
-			if(!$this->canAccessPage()){
+			if(!Administration::instance()->isLoggedIn()){
 				$this->_Parent->customError(E_USER_ERROR, __('Access Denied'), __('You are not authorised to access this page.'));
 				exit();
 			}
 			
-			$this->Html->setDTD('<!DOCTYPE html>');
-			// $this->Html->setAttribute('lang', Symphony::lang());  // Threw an error in S2.2 beta 2
 			$this->addElementToHead(new XMLElement('meta', NULL, array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=UTF-8')), 0);
 			$this->addHeaderToPage('Content-Type', 'text/html; charset=UTF-8');
 			
 			## Build the form
-			$this->Form = Widget::Form($this->_Parent->getCurrentPageURL(), 'post');
+			
+			$form = Widget::Form(Administration::instance()->getCurrentPageURL(), 'post');
 			
 			// Get the section:
 			if(isset($_GET['id'])) {
@@ -34,7 +32,6 @@
 				$section = $sectionManager->fetch($sectionID);
 				if($section != false)
 				{
-					$this->Form->appendChild(new XMLElement('h3', $section->get('name')));
 					$table = new XMLElement('table');
 					
 					// Show the entries of this section:
@@ -89,13 +86,14 @@
 						}
 					}
 					
-					$this->Form->appendChild($table);
-					$this->Form->appendChild(new XMLElement('a', __('create new'), array('href'=>'/symphony/publish/'.$section->get('handle').'/new/', 'class'=>'create button')));
-					$this->Form->appendChild(new XMLElement('div', '', array('id'=>'thumb')));
+					$form->appendChild(new XMLElement('a', __('create new'), array('href'=>'/symphony/publish/'.$section->get('handle').'/new/', 'class'=>'create button')));
+					$form->appendChild(new XMLElement('h3', $section->get('name')));
+					$form->appendChild($table);
+					$form->appendChild(new XMLElement('div', '', array('id'=>'thumb')));
 				}
 			}
 			
-			$this->_Parent->Profiler->sample('Page content created', PROFILE_LAP);
+			$this->Body->appendChild($form);
 			
 		}
 	}

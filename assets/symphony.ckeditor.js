@@ -18,12 +18,12 @@ jQuery(document).ready(function () {
 		
 		// Set the configurationdata:
         var configurationData = {
-			width : objectWidth,
+			// width : objectWidth,			
             language : 'en',            
             height : this.offsetHeight,
             removePlugins : 'font,entities,styles',
             extraPlugins : 'xmlentities',
-            uiColor : '#d6d6c7',
+            // uiColor : '#d6d6c7',
             startupOutlineBlocks : true,
             replaceByClassEnabled : false,
             xmlentities : true,
