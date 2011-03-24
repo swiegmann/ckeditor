@@ -34,7 +34,7 @@ jQuery(document).ready(function () {
                 ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
                 ['Image'],['Link', 'Unlink'],
                 ['HorizontalRule'],
-                ['Source', 'Maximize'],['Youtube']
+                ['Source', 'Maximize']
             ],
             forcePasteAsPlainText: true,
             format_tags: 'p;h1;h2;h3',
