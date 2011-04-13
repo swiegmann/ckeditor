@@ -36,10 +36,10 @@
 				$info = array('handle'=>$result['handle'], 'path'=>$result['path']);
 				if($result['path'] == null)
 				{
-					$info['url'] = '/'.$result['handle'];
+					$info['url'] = '/'.$result['handle'].'/';
 					$info['title'] = $result['title'];
 				} else {
-					$info['url'] = '/'.$result['path'].'/'.$result['handle'];
+					$info['url'] = '/'.$result['path'].'/'.$result['handle'].'/';
 					$info['title'] = $title.$result['title'];
 				}
 				$tree[] = $info;

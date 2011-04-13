@@ -13,22 +13,15 @@ jQuery(document).ready(function () {
 		// Set the objectname:
         var objectName = jQuery(this).attr('name');
 		
-		// Fix for IE:
-		var objectWidth = jQuery(this).width();
-		
 		// Set the configurationdata:
         var configurationData = {
-			// width : objectWidth,			
-            language : 'en',
-            skin:'chris',
-            height : this.offsetHeight,
-            removePlugins : 'font,styles',
-            extraPlugins : 'xmlentities',
-            // uiColor : '#d6d6c7',
-            startupOutlineBlocks : true,
-            replaceByClassEnabled : false,
-            xmlentities : true,
-            toolbar : 
+            language: 'en',
+            skin: 'chris',
+            height: this.offsetHeight,
+            removePlugins: 'font,styles',
+            startupOutlineBlocks: true,
+            replaceByClassEnabled: false,
+            toolbar:
             [
                 ['Format'],
                 ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
@@ -48,13 +41,13 @@ jQuery(document).ready(function () {
 			var tags = ['p', 'ol', 'ul', 'li']; // etc.
 			for (var key in tags) {
 				ev.editor.dataProcessor.writer.setRules(tags[key],
-					{
-						indent : false,
-						breakBeforeOpen : true,
-						breakAfterOpen : false,
-						breakBeforeClose : false,
-						breakAfterClose : true
-					});
+                {
+                    indent : false,
+                    breakBeforeOpen : true,
+                    breakAfterOpen : false,
+                    breakBeforeClose : false,
+                    breakAfterClose : true
+                });
 			}
 		});
 		

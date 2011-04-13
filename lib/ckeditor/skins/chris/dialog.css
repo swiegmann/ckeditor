@@ -81,12 +81,14 @@ right:30px;
 }
 
 .cke_skin_chris .cke_dialog_ml,.cke_skin_chris .cke_dialog_mr {
-background-image:url(images/dialog_sides.png);
+background-image: url(images/dialog_sides.png);
 background-repeat:repeat-y;
 bottom:51px;
 position:absolute;
 top:16px;
 width:16px;
+/* Fix for IE9: */
+height: auto !important;
 }
 
 .cke_skin_chris .cke_rtl .cke_dialog_ml,.cke_skin_chris .cke_rtl .cke_dialog_mr {
