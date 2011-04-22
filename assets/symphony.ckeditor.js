@@ -2,17 +2,19 @@ if (typeof Symphony.ADMIN == "undefined") {
 	Symphony.ADMIN = window.location.toString().match(/^(.+\/symphony)/)[1];
 }
 
+
 jQuery(document).ready(function () {
-	
+
+
 	// See if there are any ckeditor textareas:
-    jQuery('label > textarea.ckeditor').each(function(index) {
+    jQuery('textarea.ckeditor').each(function(index) {
 		
 		// Disable replacing by class:
 		CKEDITOR.replaceByClassEnabled = false;
 		
 		// Set the objectname:
         var objectName = jQuery(this).attr('name');
-		
+
 		// Set the configurationdata:
         var configurationData = {
             language: 'en',
