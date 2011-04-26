@@ -5,6 +5,26 @@ if (typeof Symphony.ADMIN == "undefined") {
 
 jQuery(document).ready(function () {
 
+    // Set the configurationdata:
+    CKEDITOR.config.language = 'en';
+    CKEDITOR.config.skin = 'chris';
+    // CKEDITOR.config.height = this.offsetHeight;
+    CKEDITOR.config.removePlugins = 'font,styles';
+    CKEDITOR.config.startupOutlineBlocks = true;
+    CKEDITOR.config.replaceByClassEnabled = false;
+    CKEDITOR.config.toolbar =
+    [
+        ['Format'],
+        ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
+        ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
+        ['Image'],['Link', 'Unlink'],
+        ['HorizontalRule'],
+        ['Source', 'Maximize']
+    ];
+    CKEDITOR.config.forcePasteAsPlainText = true;
+    CKEDITOR.config.format_tags = 'p;h1;h2;h3';
+    CKEDITOR.config.entities_processNumerical = 'force';
+    CKEDITOR.config.filebrowserBrowseUrl = Symphony.ADMIN + '/extension/ckeditor/filebrowser/';
 
 	// See if there are any ckeditor textareas:
     jQuery('textarea.ckeditor').each(function(index) {
@@ -15,29 +35,6 @@ jQuery(document).ready(function () {
 		// Set the objectname:
         var objectName = jQuery(this).attr('name');
 
-		// Set the configurationdata:
-        var configurationData = {
-            language: 'en',
-            skin: 'chris',
-            height: this.offsetHeight,
-            removePlugins: 'font,styles',
-            startupOutlineBlocks: true,
-            replaceByClassEnabled: false,
-            toolbar:
-            [
-                ['Format'],
-                ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
-                ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
-                ['Image'],['Link', 'Unlink'],
-                ['HorizontalRule'],
-                ['Source', 'Maximize']
-            ],
-            forcePasteAsPlainText: true,
-            format_tags: 'p;h1;h2;h3',
-            entities_processNumerical: 'force',
-            filebrowserBrowseUrl: Symphony.ADMIN + '/extension/ckeditor/filebrowser/'
-        };
-		
 		// Do not add linebreaks and spaces after opening and before closing tags.
 		CKEDITOR.on('instanceReady', function(ev){
 			var tags = ['p', 'ol', 'ul', 'li']; // etc.
@@ -54,6 +51,6 @@ jQuery(document).ready(function () {
 		});
 		
 		// Replace CKEditor instances:
-        CKEDITOR.replace(objectName, configurationData);
+        CKEDITOR.replace(objectName); //, configurationData);
     });
 });
