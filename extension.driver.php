@@ -9,8 +9,8 @@
 		public function about() {
 			return array(
 				'name' => 'Text Formatter: CKEditor',
-				'version' => '1.2.1',
-				'release-date' => '2011-04-13',
+				'version' => '1.2.2',
+				'release-date' => '2011-08-16',
 				'author' => array(
 					'name'     => '<a href="http://thecocoabots.com">Tony Arnold</a>, <a href="http://gielberkers.com">Giel Berkers</a>'
 				),
