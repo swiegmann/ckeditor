@@ -1,10 +1,10 @@
 <?php
 
-	Class formatterckeditor extends TextFormatter{
+	Class formatterckeditor_compact extends TextFormatter{
 		
 		function about(){
 			return array(
-				'name' => 'CKEditor',
+				'name' => 'CKEditor : Compact',
 				'version' => '1.2.3',
 				'release-date' => '2011-08-18',
 				'author' => array(
