@@ -20,7 +20,6 @@ jQuery(document).ready(function () {
         // Check if this is the compact CKEditor:
         if(jQuery(this).hasClass("ckeditor_compact"))
         {
-            console.log('compact');
             jQuery(this).parent().addClass("ck_compact");
             configurationData.toolbar =
             [
@@ -32,7 +31,6 @@ jQuery(document).ready(function () {
             configurationData.removePlugins = 'font,styles,elementspath';
             configurationData.startupOutlineBlocks = false;
         } else {
-            console.log('niet compact');
             configurationData.toolbar =
             [
                 ['Format'],
@@ -66,8 +64,6 @@ jQuery(document).ready(function () {
             // Add a border:
             jQuery("label.ck_compact td.cke_contents").css({borderBottom: "1px solid #aaa"});
 		});
-
-        console.log(configurationData);
 
 		// Replace CKEditor instances:
         CKEDITOR.replace(objectName, configurationData);
