@@ -26,6 +26,10 @@
 			
 			$form = Widget::Form(Administration::instance()->getCurrentPageURL(), 'post');
 			
+			// Check for the subdirectory:
+			$symphonyDomain = parse_url(URL, PHP_URL_SCHEME) . '://' . parse_url(URL, PHP_URL_HOST);
+			$symphonySubdir = str_replace($symphonyDomain, '', URL);
+			
 			// Get the section:
 			if(isset($_GET['id'])) {
 				$sectionID = intval($_GET['id']);
@@ -70,14 +74,18 @@
                                 if($name == false) {
                                     $name = basename($info['file']);
                                 }
+
+                                $value = '<a href="'.$symphonySubdir.'/workspace'.$info['file'].'">';
+
                                 $value = '<a href="/workspace'.$info['file'].'">';
                                 $a = explode('.', $info['file']);
                                 $ext = trim(strtolower($a[count($a)-1]));
+
                                 // Check if JIT is enabled:
                                 if($jitEnabled &&
                                    ($ext == 'jpeg' || $ext == 'jpg' || $ext == '/png' || $ext == 'gif'))
                                 {
-                                    $value .= '<img src="/image/2/100/100/5'.$info['file'].'" alt="thumb" width="100" height="100" />';
+                                    $value .= '<img src="'.$symphonySubdir.'/image/2/100/100/5'.$info['file'].'" alt="thumb" width="100" height="100" />';
                                 } else {
                                     // Show an icon according to it's extension:
                                     $a = explode('.', basename($info['file']));
@@ -91,7 +99,7 @@
                         }
 					}
 
-					$form->appendChild(new XMLElement('a', __('create new'), array('href'=>'/symphony/publish/'.$section->get('handle').'/new/', 'class'=>'create button')));
+					$form->appendChild(new XMLElement('a', __('create new'), array('href'=>$symphonySubdir.'/symphony/publish/'.$section->get('handle').'/new/', 'class'=>'create button')));
 					$form->appendChild(new XMLElement('h3', $section->get('name')));
 					$form->appendChild($div);
 					$form->appendChild(new XMLElement('div', '', array('id'=>'thumb')));
