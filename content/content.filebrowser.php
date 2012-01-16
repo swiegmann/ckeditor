@@ -5,9 +5,9 @@
 
 	Class contentExtensionCkeditorFilebrowser extends HTMLPage
 	{
-		public function __construct(&$parent){
+/*		public function __construct(&$parent){
 			parent::__construct($parent);
-		}
+		}*/
 		
 		
 		public function build($context)

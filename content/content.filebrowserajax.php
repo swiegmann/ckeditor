@@ -6,9 +6,9 @@
 
 	Class contentExtensionCkeditorFilebrowserajax extends HTMLPage
 	{
-		function __construct(&$parent){
+/*		function __construct(&$parent){
 			parent::__construct($parent);			
-		}
+		}*/
 		
 		function build($context)
 		{
@@ -41,8 +41,18 @@
 					$div = new XMLElement('div', null, array('class'=>'items'));
                     // Check if JIT is installed:
                     $extensionManager = new ExtensionManager($this);
-                    $status = $extensionManager->fetchStatus('jit_image_manipulation');
-                    $jitEnabled = $status == EXTENSION_ENABLED;
+
+                    // Backward compatibility with pre-2.3-versions of Symphony:
+                    if(version_compare(Administration::Configuration()->get('version', 'symphony'), '2.2.5', '>'))
+                    {
+                        // 2.3 and up:
+                        $status = $extensionManager->fetchStatus(array('handle'=>'jit_image_manipulation'));
+                        $jitEnabled = in_array(EXTENSION_ENABLED, $status);
+                    } else {
+                        // lower:
+                        $status = $extensionManager->fetchStatus('jit_image_manipulation');
+                        $jitEnabled = $status == EXTENSION_ENABLED;
+                    }
 
 					// Get the field id's:
                     $fields = $section->fetchFields();
@@ -83,7 +93,7 @@
 
                                 // Check if JIT is enabled:
                                 if($jitEnabled &&
-                                   ($ext == 'jpeg' || $ext == 'jpg' || $ext == '/png' || $ext == 'gif'))
+                                   ($ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'gif'))
                                 {
                                     $value .= '<img src="'.$symphonySubdir.'/image/2/100/100/5'.$info['file'].'" alt="thumb" width="100" height="100" />';
                                 } else {
