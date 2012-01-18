@@ -49,8 +49,8 @@
 		 */
 		public function appendPresets($context)
 		{
-			$wrapper = $context['wrapper'];
-			
+            $wrapper = $context['wrapper'];
+
 			$fieldset = new XMLElement('fieldset', '', array('class'=>'settings'));
 			$fieldset->appendChild(new XMLElement('legend', __('CKEditor File Browser')));
 			$fieldset->appendChild(new XMLElement('p', __('Please select the sections that are permitted to use the CKEditor file browser:')));
@@ -228,7 +228,8 @@
 
 			} else {
 				// If no sections are selected, delete the file:
-				$this->uninstall();
+                Symphony::Configuration()->remove('sections', 'ckeditor');
+                Administration::instance()->saveConfig();
 			}
 
 		}
@@ -280,6 +281,7 @@
 		public function applyCKEditor($context) {
 
 			$format = $context['field']->get('text_formatter') == TRUE ? 'text_formatter' : 'formatter';
+
 
 			if(($context['field']->get($format) != 'ckeditor' && $context['field']->get($format) != 'ckeditor_compact')) return;
 			
