@@ -15,8 +15,9 @@ jQuery(document).ready(function () {
         configurationData.format_tags = 'p;h1;h2;h3';
         configurationData.entities_processNumerical = 'force';
         configurationData.filebrowserBrowseUrl = Symphony.ADMIN + '/extension/ckeditor/filebrowser/';
-        // Set the correct height:
+        // Set the correct height and width:
         configurationData.height = jQuery(this).height();
+        configurationData.width = jQuery(this).width();
 
         // Check if this is the compact CKEditor:
         if(jQuery(this).hasClass("ckeditor_compact"))
