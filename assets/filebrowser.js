@@ -12,6 +12,8 @@ if (typeof Symphony.ADMIN == "undefined") {
 }
 
 $(function(){
+    var $ = jQuery;
+
 	funcNum = getUrlParam('CKEditorFuncNum');
 
 	$("div.left a").click(function(){
@@ -27,6 +29,8 @@ $(function(){
 
 function loadRightPanel(url)
 {
+    var $ = jQuery;
+
 	$("div.right").load(url/*+ " form>*"*/, function(){
 		// some magic mumbo jumbo:
 		// Hover on the table rows:
@@ -58,6 +62,8 @@ function loadRightPanel(url)
 
 function buildForm(data)
 {
+    var $ = jQuery;
+    
 	$("div.right").html('<form method="post" action="' + urlNew + '"></form>');
 	$("div.field", data).each(function(){
 		$("div.right form").append('<div class="field">' + $(this).html() + '</div>');
