@@ -12,8 +12,8 @@
 		public function about() {
 			return array(
 				'name' => 'Text Formatter: CKEditor',
-				'version' => '1.2.4',
-				'release-date' => '2011-12-12',
+				'version' => '1.3',
+				'release-date' => '2012-04-24',
 				'author' => array(
 					'name'     => '<a href="http://thecocoabots.com">Tony Arnold</a>, <a href="http://gielberkers.com">Giel Berkers</a>'
 				),
@@ -62,7 +62,7 @@
 			$data = Symphony::Configuration()->get('sections', 'ckeditor');
 			$checkedSections = $data != false ? explode(',', $data) : array();
 			
-			// Bugfix for if there are no sections found:
+			// If there are no sections found:
 			if($sections)
 			{
 				$options = array();
@@ -73,48 +73,63 @@
 				$fieldset->appendChild(Widget::Select('ckeditor_sections[]', $options, array('multiple'=>'multiple')));
 			}
 
-            // Link templates for CKEditor, only for 2.3+:
+            // Link templates for CKEditor:
             if(version_compare(Administration::Configuration()->get('version', 'symphony'), '2.2.5', '>'))
             {
-                $sections = SectionManager::fetch();
-                $this->sections = array();
-                foreach($sections as $s)
-                {
-                    $a = array('id'=>$s->get('id'), 'name'=>$s->get('name'), 'fields'=>array());
-                    $fields = FieldManager::fetch(null, $s->get('id'));
-                    foreach($fields as $field)
-                    {
-                        // For now, only allow fields of the type 'input' to be used as a handle:
-                        if($field->get('type') == 'input')
-                        {
-                            $a['fields'][] = array('id'=>$field->get('id'), 'label'=>$field->get('label'), 'element_name'=>$field->get('element_name'));
-                        }
-                    }
-                    $this->sections[] = $a;
-                }
+				$sections = SectionManager::fetch();
+				$pages 	= PageManager::fetch();
+				$new   	= true;
+			} else {
+				$sm 	= new SectionManager($this);
+				$fm 	= new FieldManager(Administration::instance());
+				$sections = $sm->fetch();
+				$pages    = Symphony::Database()->fetch('SELECT * FROM `tbl_pages` ORDER BY `sortorder`;');
+				$new 	= false;
+			}
 
-                $fieldset->appendChild(new XMLElement('p', __('Link templates:')));
-                $ol = new XMLElement('ol');
-                $ol->setAttribute('id', 'fields-duplicator');
+			$this->sections = array();
+			foreach($sections as $s)
+			{
+				$a = array('id'=>$s->get('id'), 'name'=>$s->get('name'), 'fields'=>array());
+				if($new)
+				{
+					$fields = FieldManager::fetch(null, $s->get('id'));
+				} else {
+					$fields = $fm->fetch(null, $s->get('id'));
+				}
+				foreach($fields as $field)
+				{
+					// For now, only allow fields of the type 'input' to be used as a handle:
+					if($field->get('type') == 'input')
+					{
+						$a['fields'][] = array('id'=>$field->get('id'), 'label'=>$field->get('label'), 'element_name'=>$field->get('element_name'));
+					}
+				}
+				$this->sections[] = $a;
+			}
 
-                $pages = PageManager::fetch();
-                $templates = Symphony::Database()->fetch('SELECT * FROM `tbl_ckeditor_link_templates`;');
-                if(!is_array($pages)) $pages = array($pages);
+			$fieldset->appendChild(new XMLElement('p', __('Link templates:')));
+			$ol = new XMLElement('ol');
+			$ol->setAttribute('id', 'fields-duplicator');
+			$ol->setAttribute('class', 'ckeditor-templates');
 
-                foreach($pages as $page)
-                {
-                    foreach($templates as $template) {
-                        if($template['page_id'] != $page['id']) continue;
-                        $duplicator = $this->__buildDuplicatorItem($page, $template);
-                        $ol->appendChild($duplicator);
-                    }
+			$templates = Symphony::Database()->fetch('SELECT * FROM `tbl_ckeditor_link_templates`;');
+			if(!is_array($pages)) $pages = array($pages);
 
-                    $duplicator = $this->__buildDuplicatorItem($page, NULL);
-                    $ol->appendChild($duplicator);
-                }
+			foreach($pages as $page)
+			{
+				foreach($templates as $template) {
+					if($template['page_id'] != $page['id']) continue;
+					$duplicator = $this->__buildDuplicatorItem($page, $template);
+					$ol->appendChild($duplicator);
+				}
 
-                $fieldset->appendChild($ol);
-            }
+				$duplicator = $this->__buildDuplicatorItem($page, NULL);
+				$ol->appendChild($duplicator);
+			}
+
+			$fieldset->appendChild($ol);
+
 
 			$wrapper->appendChild($fieldset);
 
@@ -122,15 +137,22 @@
             $wrapper->appendChild(new XMLElement('script', '
                 jQuery(function($){
                     var first = true;
-                    $("select[name^=ckeditor_link_templates][name$=\'[section_id]\']").change(function(){
-                        var label = $(":selected", this).text();
-                        $("optgroup, option", $(this).parent().next()).hide();
-                        $("optgroup[label=" + label + "], optgroup[label=" + label + "] option", $(this).parent().next()).show();
-                        if(!first)
-                        {
-                            $("option:first", $(this).parent().next()).show().attr("selected", "selected");
-                        }
-                    }).change();
+                    function bindFunctionality()
+                    {
+						$("select[name^=ckeditor_link_templates][name$=\'[section_id]\']").change(function(){
+							var label = $(":selected", this).text();
+							$("optgroup, option", $(this).parent().next()).hide();
+							$("optgroup[label=" + label + "], optgroup[label=" + label + "] option", $(this).parent().next()).show();
+							if(!first)
+							{
+								$("option:first", $(this).parent().next()).show().attr("selected", "selected");
+							}
+						}).change();
+                    }
+                    $("ol.ckeditor-templates a.constructor").click(function(){
+                		bindFunctionality();
+                    });
+                    bindFunctionality();
                     first = false;
                 });
             ', array('type'=>'text/javascript')));
@@ -148,7 +170,7 @@
 
             $divgroup = new XMLElement('div');
 
-            $label = Widget::Label(__('Link template') . '<i>' . __('Use {$param} for field-placeholders') . '</i>');
+            $label = Widget::Label(__('Link template') . '<i>' . __('Use {$fieldname} for field-placeholders. If the field has a handle, this is automatically used.') . '</i>');
             $label->appendChild(Widget::Input(
                 "ckeditor_link_templates[" . $index . "][link]",
                 General::sanitize($template['link']
@@ -201,19 +223,6 @@
 		public function savePresets($context)
 		{
 			if(isset($_POST['ckeditor_sections'])) {
-                // Save the link templates to the database:
-                Symphony::Database()->query("DELETE FROM `tbl_ckeditor_link_templates`");
-
-                $shortcuts = $_POST['ckeditor_link_templates'];
-                unset($_POST['ckeditor_link_templates']);
-
-                if(!empty($shortcuts))
-                {
-                    foreach($shortcuts as $i => $shortcut) {
-                        Symphony::Database()->insert($shortcut, "tbl_ckeditor_link_templates");
-                    }
-                }
-
                 // Save the sections to the config-file
 				$sectionStr = implode(',', $_POST['ckeditor_sections']);
                 Symphony::Configuration()->set('sections', $sectionStr, 'ckeditor');
@@ -231,7 +240,20 @@
                 Symphony::Configuration()->remove('sections', 'ckeditor');
                 Administration::instance()->saveConfig();
 			}
+			if(isset($_POST['ckeditor_link_templates'])) {
+                // Save the link templates to the database:
+                Symphony::Database()->query("DELETE FROM `tbl_ckeditor_link_templates`");
 
+				$shortcuts = $_POST['ckeditor_link_templates'];
+                unset($_POST['ckeditor_link_templates']);
+
+                if(!empty($shortcuts))
+                {
+                    foreach($shortcuts as $i => $shortcut) {
+                        Symphony::Database()->insert($shortcut, "tbl_ckeditor_link_templates");
+                    }
+                }
+			}
 		}
 
         /**

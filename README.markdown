@@ -1,8 +1,8 @@
 # CKEditor for Symphony CMS
 
- * Version: 1.2.4
+ * Version: 1.3
  * CKEditor version: 3.6.3
- * Date: 19-04-2011
+ * Date: 24-04-2011
  * Authors: Tony Arnold <tony@thecocoabots.com>, Giel Berkers <info@gielberkers.com>
  * Repository: <http://github.com/kanduvisla/symphony-ckeditor/>
  * Requirements: Symphony CMS 2.2 or higher <http://github.com/symphony/symphony-2/tree/master>
@@ -53,7 +53,7 @@ This Symphony extension comes with a built-in file browser that is compatible wi
 
 ## Link templates
 
-As of Symphony 2.3, it's possible to create link templates for CKEditor. This works as following:
+As of version 1.3, it's possible to create link templates for CKEditor. This works as following:
 
 Say, you got a page called 'News', and a section called 'News articles' in which you store all your news articles. This means
 your news articles probably got URL's like:
@@ -65,4 +65,4 @@ your news articles probably got URL's like:
 You might want to link to these pages from other pages, but you don't want to copy/paste those links. You just want them to
 be there in your dropdown of Symphony Pages when you select a link. This is where link templates come in: You can create
 a link template like: `/news/detail/{$id}/{$title}/`, choose a section the generate the list from, and select the page
-where to show these links. You can set these in the preferences page of your Symphony installation.
+from where to show these links. You can set these in the preferences page of your Symphony installation.
