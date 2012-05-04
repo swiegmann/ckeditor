@@ -43,6 +43,10 @@ The version of CKEditor included with this Symphony extension is stripped down t
  * *Most of CKEditor's plug-ins have been removed*: if you wish to add more plug-ins, please download the original [CKEditor](http://ckeditor.com) package and extract the plugins you'd like to include.
  * *All languages other than US English are removed*: If you wish to make use of additional languages, please download the original version of [CKEditor](http://ckeditor.com) and extract the languages you'd like to include.
 
+## Page links
+
+CKEditor creates a list of pages to link to. To exclude pages to be added to this list, add the type `ck_hide` to them.
+
 ## Built-in file browser
 
 This Symphony extension comes with a built-in file browser that is compatible with CKEditor. This file browser uses Symphony sections to store and retrieve uploaded files. It works as follows:
