@@ -1,8 +1,8 @@
 # CKEditor for Symphony CMS
 
- * Version: 1.3
+ * Version: 1.3.1
  * CKEditor version: 3.6.3
- * Date: 24-04-2011
+ * Date: 04-05-2012
  * Authors: Tony Arnold <tony@thecocoabots.com>, Giel Berkers <info@gielberkers.com>
  * Repository: <http://github.com/kanduvisla/symphony-ckeditor/>
  * Requirements: Symphony CMS 2.2 or higher <http://github.com/symphony/symphony-2/tree/master>
@@ -42,10 +42,6 @@ The version of CKEditor included with this Symphony extension is stripped down t
    * Full screen
  * *Most of CKEditor's plug-ins have been removed*: if you wish to add more plug-ins, please download the original [CKEditor](http://ckeditor.com) package and extract the plugins you'd like to include.
  * *All languages other than US English are removed*: If you wish to make use of additional languages, please download the original version of [CKEditor](http://ckeditor.com) and extract the languages you'd like to include.
-
-## Page links
-
-CKEditor creates a list of pages to link to. To exclude pages to be added to this list, add the type `ck_hide` to them.
 
 ## Built-in file browser
 

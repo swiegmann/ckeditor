@@ -12,8 +12,8 @@
 		public function about() {
 			return array(
 				'name' => 'Text Formatter: CKEditor',
-				'version' => '1.3',
-				'release-date' => '2012-04-24',
+				'version' => '1.3.1',
+				'release-date' => '2012-05-04',
 				'author' => array(
 					'name'     => '<a href="http://thecocoabots.com">Tony Arnold</a>, <a href="http://gielberkers.com">Giel Berkers</a>'
 				),
@@ -77,15 +77,41 @@
             if(version_compare(Administration::Configuration()->get('version', 'symphony'), '2.2.5', '>'))
             {
 				$sections = SectionManager::fetch();
-				$pages 	= PageManager::fetch();
+				$dbpages 	= PageManager::fetch();
 				$new   	= true;
 			} else {
 				$sm 	= new SectionManager($this);
 				$fm 	= new FieldManager(Administration::instance());
 				$sections = $sm->fetch();
-				$pages    = Symphony::Database()->fetch('SELECT * FROM `tbl_pages` ORDER BY `sortorder`;');
+	            $dbpages    = Symphony::Database()->fetch('SELECT * FROM `tbl_pages`;');
 				$new 	= false;
 			}
+			// todo: S2.3 compatibility? No DB queries should be here, but all should be done with managers:
+			$pages = array();
+			// Filter out the ck_hide:
+			foreach ($dbpages as $page) {
+				if (Symphony::Database()->fetchVar('count', 0, sprintf('SELECT COUNT(*) AS `count` FROM `tbl_pages_types` WHERE
+		        `page_id` = %d AND `type` = \'ck_hide\';', $page['id'])) == 0
+				) {
+					$pages[] = $page;
+				}
+			}
+			// Adjust page title:
+			foreach ($pages as &$_page) {
+				$p = $_page;
+				$title = $_page['title'];
+				while (!is_null($p['parent'])) {
+					$p = Symphony::Database()->fetchRow(0, sprintf('SELECT * FROM `tbl_pages` WHERE `id` = %d', $p['parent']));
+					$title = $p['title'] . ' : ' . $title;
+				}
+				$_page['title'] = $title;
+			}
+			// Sort the array:
+			$titles = array();
+			foreach ($pages as $key => $row) {
+				$titles[$key] = strtolower($row['title']);
+			}
+			array_multisort($titles, SORT_ASC, $pages);
 
 			$this->sections = array();
 			foreach($sections as $s)
@@ -130,22 +156,21 @@
 
 			$fieldset->appendChild($ol);
 
-
 			$wrapper->appendChild($fieldset);
 
             // Some JavaScript:
             $wrapper->appendChild(new XMLElement('script', '
                 jQuery(function($){
-                    var first = true;
                     function bindFunctionality()
                     {
 						$("select[name^=ckeditor_link_templates][name$=\'[section_id]\']").change(function(){
 							var label = $(":selected", this).text();
-							$("optgroup, option", $(this).parent().next()).hide();
-							$("optgroup[label=" + label + "], optgroup[label=" + label + "] option", $(this).parent().next()).show();
-							if(!first)
+							$("optgroup, option", $(this).parent().next()).attr("disabled","disabled");
+							$("optgroup[label=\'" + label + "\'], optgroup[label=\'" + label + "\'] option", $(this).parent().next()).removeAttr("disabled");
+							var currentSelected = $("option:selected", $(this).parent().next());
+							if(currentSelected.val() == "" || currentSelected.attr("disabled") == true)
 							{
-								$("option:first", $(this).parent().next()).show().attr("selected", "selected");
+								$("option:first", $(this).parent().next()).attr("selected", "selected");
 							}
 						}).change();
                     }
@@ -153,7 +178,6 @@
                 		bindFunctionality();
                     });
                     bindFunctionality();
-                    first = false;
                 });
             ', array('type'=>'text/javascript')));
 		}
@@ -165,7 +189,6 @@
 
             $wrapper = new XMLElement('li');
             $wrapper->setAttribute('class', ($template == NULL) ? 'template' : '');
-
             $wrapper->appendChild(new XMLElement('h4', $page['title']));
 
             $divgroup = new XMLElement('div');
