@@ -16,9 +16,6 @@
             $tree = array();
 			$tree[] = array('name'=>'', 'items'=>$this->buildTree());
 
-/*			echo '<pre>';
-			print_r($tree);*/
-
 			echo json_encode($tree);
 			die();
 		}
@@ -27,16 +24,15 @@
 		{
 			if($parent == null)
 			{
-				$results = Symphony::Database()->fetch('SELECT `id`, `title`, `handle`, `path` FROM `tbl_pages` WHERE `parent` IS NULL ORDER BY `sortorder` ASC;');
+				$results = PageManager::fetch(true, array(), array('`parent` IS NULL'), '`sortorder` ASC');
 			} else {
-				$results = Symphony::Database()->fetch('SELECT `id`, `title`, `handle`, `path` FROM `tbl_pages` WHERE `parent` = '.$parent.' ORDER BY `sortorder` ASC;');
+				$results = PageManager::fetch(true, array(), array('`parent` = '.$parent), '`sortorder` ASC');
 			}
 			$tree = array();
 			foreach($results as $result)
 			{
 				// Check if the page should be shown:
-				if(Symphony::Database()->fetchVar('count', 0,
-					sprintf('SELECT COUNT(*) AS `count` FROM `tbl_pages_types` WHERE `page_id` = %d AND `type` = \'ck_hide\';', $result['id'])) == 0)
+				if(!in_array('ck_hide', $result['type']))
 				{
 					$prefix = '';
 					$info = array('handle'=>$result['handle'], 'path'=>$result['path']);
@@ -72,8 +68,6 @@
 
 		private function checkTemplates($pageId, $prefix = '')
 		{
-			$new = version_compare(Administration::Configuration()->get('version', 'symphony'), '2.2.5', '>');
-
             // Link templates:
             $templates = Symphony::Database()->fetch(
 				sprintf('SELECT * FROM `tbl_ckeditor_link_templates` WHERE `page_id` = %d;', $pageId)
@@ -83,16 +77,8 @@
 
             foreach($templates as $template)
             {
-				if($new)
-				{
-					$section = SectionManager::fetch($template['section_id']);
-					$entries = EntryManager::fetch(null, $template['section_id']);
-				} else {
-					$sm = new SectionManager($this);
-					$em = new EntryManager(Administration::instance());
-					$section = $sm->fetch($template['section_id']);
-					$entries = $em->fetch(null, $template['section_id']);
-				}
+				$section = SectionManager::fetch($template['section_id']);
+				$entries = EntryManager::fetch(null, $template['section_id']);
                 $fields  = $section->fetchFields();
                 foreach($entries as $entry)
                 {
@@ -120,7 +106,6 @@
 					 );
 
                 }
-                // $tree[] = array('name'=>__($section->get('name')), 'items'=>$entryTree);
             }
 
 			return $entryTree;

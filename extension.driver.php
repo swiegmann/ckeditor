@@ -7,23 +7,9 @@
         protected $sections;
 
 		/**
-		 * Extension information
-		 */		 
-		public function about() {
-			return array(
-				'name' => 'Text Formatter: CKEditor',
-				'version' => '1.3.1',
-				'release-date' => '2012-05-04',
-				'author' => array(
-					'name'     => '<a href="http://thecocoabots.com">Tony Arnold</a>, <a href="http://gielberkers.com">Giel Berkers</a>'
-				),
-				'description' => 'Includes CKEditor, a web-based XHTML editor developed by Frederico Knabben. It also has an integrated file browser which uses Symphony sections to get it\'s files from.'
-			);
-		}
-	
-		/**
 		 * Add callback functions to backend delegates
-		 */	
+		 * @return array
+		 */
 		public function getSubscribedDelegates(){
 			return array(
 				array('page'		=>	'/backend/',
@@ -46,15 +32,17 @@
 		
 		/**
 		 * Append presets
+		 * @param $context
 		 */
 		public function appendPresets($context)
 		{
-            $wrapper = $context['wrapper'];
+			Symphony::Engine()->Page->addScriptToHead(URL . '/extensions/ckeditor/assets/preferences.js', 4676);
+
+			$wrapper = $context['wrapper'];
 
 			$fieldset = new XMLElement('fieldset', '', array('class'=>'settings'));
 			$fieldset->appendChild(new XMLElement('legend', __('CKEditor File Browser')));
-			$fieldset->appendChild(new XMLElement('p', __('Please select the sections that are permitted to use the CKEditor file browser:')));
-			
+
 			$sectionManager = new SectionManager($this);
 			$sections = $sectionManager->fetch();
 			
@@ -70,42 +58,37 @@
 				{
 					$options[] = array($section->get('id'), in_array($section->get('id'), $checkedSections), $section->get('name'));
 				}
-				$fieldset->appendChild(Widget::Select('ckeditor_sections[]', $options, array('multiple'=>'multiple')));
+				$label = Widget::Label(__('Permitted sections for the file browser:'));
+				$label->appendChild(Widget::Select('ckeditor_sections[]', $options, array('multiple'=>'multiple')));
+				$fieldset->appendChild($label);
 			}
 
             // Link templates for CKEditor:
-            if(version_compare(Administration::Configuration()->get('version', 'symphony'), '2.2.5', '>'))
-            {
-				$sections = SectionManager::fetch();
-				$dbpages 	= PageManager::fetch();
-				$new   	= true;
-			} else {
-				$sm 	= new SectionManager($this);
-				$fm 	= new FieldManager(Administration::instance());
-				$sections = $sm->fetch();
-	            $dbpages    = Symphony::Database()->fetch('SELECT * FROM `tbl_pages`;');
-				$new 	= false;
-			}
-			// todo: S2.3 compatibility? No DB queries should be here, but all should be done with managers:
+			$sections = SectionManager::fetch();
+			$dbpages 	= PageManager::fetch();
+
 			$pages = array();
+
 			// Filter out the ck_hide:
 			foreach ($dbpages as $page) {
-				if (Symphony::Database()->fetchVar('count', 0, sprintf('SELECT COUNT(*) AS `count` FROM `tbl_pages_types` WHERE
-		        `page_id` = %d AND `type` = \'ck_hide\';', $page['id'])) == 0
-				) {
+				$types = PageManager::fetchPageTypes($page['id']);
+				if(!in_array('ck_hide', $types))
+				{
 					$pages[] = $page;
 				}
 			}
+
 			// Adjust page title:
 			foreach ($pages as &$_page) {
 				$p = $_page;
 				$title = $_page['title'];
 				while (!is_null($p['parent'])) {
-					$p = Symphony::Database()->fetchRow(0, sprintf('SELECT * FROM `tbl_pages` WHERE `id` = %d', $p['parent']));
+					$p = PageManager::fetch(false, array(), array('id' => $p['parent']));
 					$title = $p['title'] . ' : ' . $title;
 				}
 				$_page['title'] = $title;
 			}
+
 			// Sort the array:
 			$titles = array();
 			foreach ($pages as $key => $row) {
@@ -117,12 +100,7 @@
 			foreach($sections as $s)
 			{
 				$a = array('id'=>$s->get('id'), 'name'=>$s->get('name'), 'fields'=>array());
-				if($new)
-				{
-					$fields = FieldManager::fetch(null, $s->get('id'));
-				} else {
-					$fields = $fm->fetch(null, $s->get('id'));
-				}
+				$fields = FieldManager::fetch(null, $s->get('id'));
 				foreach($fields as $field)
 				{
 					// For now, only allow fields of the type 'input' to be used as a handle:
@@ -134,10 +112,9 @@
 				$this->sections[] = $a;
 			}
 
-			$fieldset->appendChild(new XMLElement('p', __('Link templates:')));
+			$fieldset->appendChild(new XMLElement('p', __('Link templates:'), array('class' => 'label')));
 			$ol = new XMLElement('ol');
-			$ol->setAttribute('id', 'fields-duplicator');
-			$ol->setAttribute('class', 'ckeditor-templates');
+			$ol->setAttribute('class', 'ckeditor-duplicator');
 
 			$templates = Symphony::Database()->fetch('SELECT * FROM `tbl_ckeditor_link_templates`;');
 			if(!is_array($pages)) $pages = array($pages);
@@ -157,43 +134,27 @@
 			$fieldset->appendChild($ol);
 
 			$wrapper->appendChild($fieldset);
-
-            // Some JavaScript:
-            $wrapper->appendChild(new XMLElement('script', '
-                jQuery(function($){
-                    function bindFunctionality()
-                    {
-						$("select[name^=ckeditor_link_templates][name$=\'[section_id]\']").change(function(){
-							var label = $(":selected", this).text();
-							$("optgroup, option", $(this).parent().next()).attr("disabled","disabled");
-							$("optgroup[label=\'" + label + "\'], optgroup[label=\'" + label + "\'] option", $(this).parent().next()).removeAttr("disabled");
-							var currentSelected = $("option:selected", $(this).parent().next());
-							if(currentSelected.val() == "" || currentSelected.attr("disabled") == true)
-							{
-								$("option:first", $(this).parent().next()).attr("selected", "selected");
-							}
-						}).change();
-                    }
-                    $("ol.ckeditor-templates a.constructor").click(function(){
-                		bindFunctionality();
-                    });
-                    bindFunctionality();
-                });
-            ', array('type'=>'text/javascript')));
 		}
 
-
+		/**
+		 * @param $page
+		 * @param null $template
+		 * @return XMLElement
+		 */
         private function __buildDuplicatorItem($page, $template=NULL) {
             // value of -1 signifies a duplicator "template"
             $index = ($template == NULL) ? '-1' : $template['id'];
 
             $wrapper = new XMLElement('li');
             $wrapper->setAttribute('class', ($template == NULL) ? 'template' : '');
-            $wrapper->appendChild(new XMLElement('h4', $page['title']));
+
+	        $header = new XMLElement('header', null, array('data-name' => $page['title']));
+            $header->appendChild(new XMLElement('h4', $page['title']));
+	        $wrapper->appendChild($header);
 
             $divgroup = new XMLElement('div');
 
-            $label = Widget::Label(__('Link template') . '<i>' . __('Use {$fieldname} for field-placeholders. If the field has a handle, this is automatically used.') . '</i>');
+            $label = Widget::Label(__('Link template') . '<i>' . __('Use {$id} for the entry ID, and {$fieldname} for field-placeholders. If the field has a handle, this is automatically used.') . '</i>');
             $label->appendChild(Widget::Input(
                 "ckeditor_link_templates[" . $index . "][link]",
                 General::sanitize($template['link']
@@ -242,6 +203,7 @@
 		
 		/**
 		 * Save the presets
+		 * @param $context
 		 */
 		public function savePresets($context)
 		{
@@ -300,8 +262,8 @@
 
         /**
          * Update CKEditor
-         * @return void
-         */
+		 * @param bool|string $prevVersion
+		 */
         public function update($prevVersion)
         {
             if(version_compare($prevVersion, '1.2.4', '<'))
@@ -322,7 +284,9 @@
 		
 		/**
 		 * Load and apply CKEditor
-		 */		 
+		 * @param $context
+		 * @return mixed
+		 */
 		public function applyCKEditor($context) {
 
 			$format = $context['field']->get('text_formatter') == TRUE ? 'text_formatter' : 'formatter';
