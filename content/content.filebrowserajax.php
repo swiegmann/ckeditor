@@ -33,26 +33,14 @@
 			// Get the section:
 			if(isset($_GET['id'])) {
 				$sectionID = intval($_GET['id']);
-				$sectionManager = new SectionManager($this);
-				$section = $sectionManager->fetch($sectionID);
+				$section = SectionManager::fetch($sectionID);
 
 				if($section != false)
 				{
 					$div = new XMLElement('div', null, array('class'=>'items'));
                     // Check if JIT is installed:
-                    $extensionManager = new ExtensionManager($this);
-
-                    // Backward compatibility with pre-2.3-versions of Symphony:
-                    if(version_compare(Administration::Configuration()->get('version', 'symphony'), '2.2.5', '>'))
-                    {
-                        // 2.3 and up:
-                        $status = $extensionManager->fetchStatus(array('handle'=>'jit_image_manipulation'));
-                        $jitEnabled = in_array(EXTENSION_ENABLED, $status);
-                    } else {
-                        // lower:
-                        $status = $extensionManager->fetchStatus('jit_image_manipulation');
-                        $jitEnabled = $status == EXTENSION_ENABLED;
-                    }
+                    $status = ExtensionManager::fetchStatus(array('handle'=>'jit_image_manipulation'));
+                    $jitEnabled = in_array(EXTENSION_ENABLED, $status);
 
 					// Get the field id's:
                     $fields = $section->fetchFields();
@@ -63,8 +51,7 @@
                     }
 
 					// Add rows:
-					$entryManager = new EntryManager($this);
-					$entries = $entryManager->fetch(null, $sectionID);
+					$entries = EntryManager::fetch(null, $sectionID);
 					foreach($entries as $entry)
 					{
 						$data = $entry->getData();
