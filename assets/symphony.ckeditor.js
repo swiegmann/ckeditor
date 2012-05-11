@@ -1,39 +1,37 @@
-if (typeof Symphony.ADMIN == "undefined") {
-	Symphony.ADMIN = window.location.toString().match(/^(.+\/symphony)/)[1];
-}
+var ck_configurationData = {};
+ck_configurationData.language = 'en';
+ck_configurationData.skin = 'chris';
+ck_configurationData.replaceByClassEnabled = false;
+ck_configurationData.forcePasteAsPlainText = true;
+ck_configurationData.format_tags = 'p;h1;h2;h3';
+ck_configurationData.entities_processNumerical = 'force';
+ck_configurationData.filebrowserBrowseUrl = Symphony.Context.get('root') + '/symphony/extension/ckeditor/filebrowser/';
 
 jQuery(document).ready(function () {
 
 	// See if there are any ckeditor textareas:
     jQuery('textarea.ckeditor, textarea.ckeditor_compact').each(function(index) {
         // Set the configurationdata:
-        var configurationData = {};
-        configurationData.language = 'en';
-        configurationData.skin = 'chris';
-        configurationData.replaceByClassEnabled = false;
-        configurationData.forcePasteAsPlainText = true;
-        configurationData.format_tags = 'p;h1;h2;h3';
-        configurationData.entities_processNumerical = 'force';
-        configurationData.filebrowserBrowseUrl = Symphony.ADMIN + '/extension/ckeditor/filebrowser/';
         // Set the correct height and width:
-        configurationData.height = jQuery(this).height();
-        configurationData.width = jQuery(this).width();
+	    ck_configurationData.height = jQuery(this).height();
+	    ck_configurationData.width = jQuery(this).width();
 
         // Check if this is the compact CKEditor:
         if(jQuery(this).hasClass("ckeditor_compact"))
         {
             jQuery(this).parent().addClass("ck_compact");
-            configurationData.toolbar =
+	        ck_configurationData.toolbar =
             [
                 ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
                 ['Link', 'Unlink'],
                 ['Source']
             ];
-            configurationData.resize_enabled = false;
-            configurationData.removePlugins = 'font,styles,elementspath';
-            configurationData.startupOutlineBlocks = false;
+	        ck_configurationData.resize_enabled = false;
+	        ck_configurationData.removePlugins = 'font,styles,elementspath';
+	        ck_configurationData.startupOutlineBlocks = false;
         } else {
-            configurationData.toolbar =
+	        jQuery(this).parent().addClass("ck_full");
+	        ck_configurationData.toolbar =
             [
                 ['Format'],
                 ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
@@ -42,9 +40,9 @@ jQuery(document).ready(function () {
                 ['HorizontalRule'],
                 ['Source', 'Maximize']
             ];
-            configurationData.resize_enabled = true;
-            configurationData.removePlugins = 'font,styles';
-            configurationData.startupOutlineBlocks = true;
+	        ck_configurationData.resize_enabled = true;
+	        ck_configurationData.removePlugins = 'font,styles';
+	        ck_configurationData.startupOutlineBlocks = true;
         }
 
 		// Set the objectname:
@@ -71,6 +69,6 @@ jQuery(document).ready(function () {
 		jQuery(this).removeClass('ckeditor ckeditor_compact');
 
 		// Replace CKEditor instances:
-        CKEDITOR.replace(objectName, configurationData);
+        CKEDITOR.replace(objectName, ck_configurationData);
     });
 });
