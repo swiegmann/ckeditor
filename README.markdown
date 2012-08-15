@@ -61,3 +61,9 @@ You might want to link to these pages from other pages, but you don't want to co
 be there in your dropdown of Symphony Pages when you select a link. This is where link templates come in: You can create
 a link template like: `/news/detail/{$id}/{$title}/`, choose a section the generate the list from, and select the page
 from where to show these links. You can set these in the preferences page of your Symphony installation.
+
+## Styles
+
+As of version 1.3.3 you can add styles to your content. And not as in: you can add a color and stuff, but you can add
+style in the form of a class to your element, so you can maintain the styling of your frontend with a CSS file instead of
+inline CSS.

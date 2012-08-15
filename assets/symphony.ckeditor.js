@@ -1,4 +1,6 @@
 jQuery(document).ready(function () {
+    // Add custom styles:
+    CKEDITOR.stylesSet.add('default', ckeditor_styles);
 
 	// See if there are any ckeditor textareas:
     jQuery('textarea.ckeditor, textarea.ckeditor_compact').each(function(index) {
@@ -31,9 +33,10 @@ jQuery(document).ready(function () {
 	        ck_configurationData.startupOutlineBlocks = false;
         } else {
 	        jQuery(this).parent().addClass("ck_full");
+            var formatBlock = ckeditor_styles.length > 0 ? ['Format', 'Styles', 'RemoveFormat'] : ['Format'];
 	        ck_configurationData.toolbar =
             [
-                ['Format'],
+                formatBlock,
                 ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
                 ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
                 ['Image'],['Link', 'Unlink'],

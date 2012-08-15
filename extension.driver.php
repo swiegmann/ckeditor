@@ -133,6 +133,11 @@
 
 			$fieldset->appendChild($ol);
 
+			// Styles:
+			$fieldset->appendChild(new XMLElement('p', __('Styles: (one style per line: <code>h3.example { color: #f00; background: #0f0; }</code>) Class name is converted to name (h3.hello-world = Hello World).'), array('class'=>'label')));
+			$textarea = Widget::Textarea('ckeditor[styles]', 5, 50, Symphony::Configuration()->get('styles', 'ckeditor'));
+			$fieldset->appendChild($textarea);
+
 			$wrapper->appendChild($fieldset);
 		}
 
@@ -217,13 +222,13 @@
                     Symphony::Configuration()->write();
                 } else {
                     // Earlier versions:
-                    Administration::instance()->saveConfig();
+					Symphony::Configuration()->write();
                 }
 
 			} else {
 				// If no sections are selected, delete the file:
                 Symphony::Configuration()->remove('sections', 'ckeditor');
-                Administration::instance()->saveConfig();
+				Symphony::Configuration()->write();
 			}
 			if(isset($_POST['ckeditor_link_templates'])) {
                 // Save the link templates to the database:
@@ -238,6 +243,14 @@
                         Symphony::Database()->insert($shortcut, "tbl_ckeditor_link_templates");
                     }
                 }
+			}
+			if(isset($_POST['ckeditor']['styles']))
+			{
+				Symphony::Configuration()->set('styles', General::sanitize($_POST['ckeditor']['styles']), 'ckeditor');
+				Symphony::Configuration()->write();
+			} else {
+				Symphony::Configuration()->remove('styles', 'ckeditor');
+				Symphony::Configuration()->write();
 			}
 		}
 
@@ -291,11 +304,11 @@
 
 			$format = $context['field']->get('text_formatter') == TRUE ? 'text_formatter' : 'formatter';
 
-
 			if(($context['field']->get($format) != 'ckeditor' && $context['field']->get($format) != 'ckeditor_compact')) return;
 			
 			if(!$this->addedCKEditorHeaders){
 				Administration::instance()->Page->addScriptToHead(URL . '/extensions/ckeditor/lib/ckeditor/ckeditor.js', 200, false);
+				Administration::instance()->Page->addScriptToHead(URL . '/symphony/extension/ckeditor/js/', 209, false);
 				Administration::instance()->Page->addScriptToHead(URL . '/extensions/ckeditor/assets/symphony.ckeditor.js', 210, false);
 				Administration::instance()->Page->addStylesheetToHead(URL . '/extensions/ckeditor/assets/symphony.ckeditor.css', 'screen', 30);
 				
