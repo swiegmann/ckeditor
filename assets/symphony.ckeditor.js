@@ -4,6 +4,8 @@ jQuery(document).ready(function () {
 
 	// See if there are any ckeditor textareas:
     jQuery('textarea.ckeditor, textarea.ckeditor_compact').each(function(index) {
+        var $this = jQuery(this);
+
         // Set the configurationdata:
         var ck_configurationData = {};
         ck_configurationData.language = 'en';
@@ -66,6 +68,8 @@ jQuery(document).ready(function () {
 			}
             // Add a border:
             jQuery("label.ck_compact td.cke_contents").css({borderBottom: "1px solid #aaa"});
+            // fix width issue in SBL+
+            $this.siblings('span').css('width','');
 		});
 
 		//Stop CKEditor creating another instance
