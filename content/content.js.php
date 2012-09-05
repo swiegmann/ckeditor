@@ -30,7 +30,7 @@
 					$c = explode('-', $className);
 					$name = '';
 					foreach($c as $d) { $name .= ucfirst($d).' '; }
-					$rules[] = '{name: \''.trim($name).'\', element: \''.$element.'\', attributes: {class: \''.$className.'\'}}';
+					$rules[] = '{\'name\': \''.trim($name).'\', \'element\': \''.$element.'\', \'attributes\': {\'class\': \''.$className.'\'}}';
 				}
 			}
 			$js .= implode(',', $rules).']';
