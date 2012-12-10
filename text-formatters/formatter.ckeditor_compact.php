@@ -15,6 +15,8 @@
 		}
 		
 		function run($string) {
+			// Remove comments (sometimes Word will leave nasty comments: -->
+			$string = preg_replace('/<!--(.*)-->/Uis', '', $string);
 			return $string;
 		}
 
