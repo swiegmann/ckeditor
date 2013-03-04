@@ -344,6 +344,31 @@
 				`ouline` INT( 1 ) NULL
 				) ENGINE = MYISAM ;
 			");
+
+			// Fill default presets:
+			Symphony::Database()->query("
+			INSERT INTO `tbl_ckeditor_presets` (`name`, `toolbar`, `plugins`, `resize`, `outline`) VALUES
+('Minimal', '[''Bold'', ''Italic'', ''Strike'', ''-'', ''Subscript'', ''Superscript''],\r\n[''Link'', ''Unlink''],\r\n[''Source'']', NULL, NULL, NULL),
+('Normal', '[''Bold'', ''Italic'', ''Strike'', ''-'', ''Subscript'', ''Superscript''],\r\n[''NumberedList'', ''BulletedList'', ''-'', ''Outdent'', ''Indent'', ''Blockquote''],\r\n[''Image'', ''oembed''],[''Link'', ''Unlink''],\r\n[''HorizontalRule''],\r\n[''Source'', ''Maximize'']', NULL, 1, 1),
+('Full', '{ name: ''document'',    items : [ ''Source'',''-'',''Save'',''NewPage'',''DocProps'',''Preview'',''Print'',''-'',''Templates'' ] },\r\n    { name: ''clipboard'',   items : [ ''Cut'',''Copy'',''Paste'',''PasteText'',''PasteFromWord'',''-'',''Undo'',''Redo'' ] },\r\n    { name: ''editing'',     items : [ ''Find'',''Replace'',''-'',''SelectAll'',''-'',''SpellChecker'', ''Scayt'' ] },\r\n    { name: ''forms'',       items : [ ''Form'', ''Checkbox'', ''Radio'', ''TextField'', ''Textarea'', ''Select'', ''Button'', ''ImageButton'', ''HiddenField'' ] },\r\n    ''/'',\r\n    { name: ''basicstyles'', items : [ ''Bold'',''Italic'',''Underline'',''Strike'',''Subscript'',''Superscript'',''-'',''RemoveFormat'' ] },\r\n    { name: ''paragraph'',   items : [ ''NumberedList'',''BulletedList'',''-'',''Outdent'',''Indent'',''-'',''Blockquote'',''CreateDiv'',''-'',''JustifyLeft'',''JustifyCenter'',''JustifyRight'',''JustifyBlock'',''-'',''BidiLtr'',''BidiRtl'' ] },\r\n    { name: ''links'',       items : [ ''Link'',''Unlink'',''Anchor'' ] },\r\n    { name: ''insert'',      items : [ ''Image'',''Flash'',''Table'',''HorizontalRule'',''Smiley'',''SpecialChar'',''PageBreak'' ] },\r\n    ''/'',\r\n    { name: ''styles'',      items : [ ''Styles'',''Format'',''Font'',''FontSize'' ] },\r\n    { name: ''colors'',      items : [ ''TextColor'',''BGColor'' ] },\r\n    { name: ''tools'',       items : [ ''Maximize'', ''ShowBlocks'',''-'',''About'' ] }', NULL, 1, 1);
+			");
+
+			// Delete formatter files:
+			$formatters = glob(EXTENSIONS.'/ckeditor/text-formatters/formatter.*.php');
+			foreach($formatters as $formatter) { unlink($formatter); }
+
+			// Create it all new:
+			$presets = Symphony::Database()->fetch('SELECT * FROM `tbl_ckeditor_presets`;');
+			foreach($presets as $preset)
+			{
+				unset($preset['id']);
+				Symphony::Database()->insert($preset, 'tbl_ckeditor_presets');
+				// Create text formatter file:
+				$str = file_get_contents(EXTENSIONS.'/ckeditor/text-formatters/template.ckeditor.php');
+				$handle = 'ckeditor_'.General::createHandle($preset['name'], 255, '_');
+				$str = str_replace(array('{{NAME}}', '{{HANDLE}}'), array($preset['name'], $handle), $str);
+				file_put_contents(EXTENSIONS.'/ckeditor/text-formatters/formatter.'.$handle.'.php', $str);
+			}
         }
 
         /**
