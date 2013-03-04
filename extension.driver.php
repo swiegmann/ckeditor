@@ -133,6 +133,48 @@
 
 			$fieldset->appendChild($ol);
 
+			// Plugin presets:
+			$fieldset->appendChild(new XMLElement('p', __('Plugin presets:'), array('class' => 'label')));
+			$ol = new XMLElement('ol');
+			$ol->setAttribute('class', 'ckeditor-duplicator');
+
+			// Create template:
+			$template = new XMLElement('li', null, array('class' => 'template'));
+			$template->appendChild(new XMLElement('header', '<h3>'.__('New Preset').'</h3>'));
+			$template->appendChild(Widget::Label(__('Name'), Widget::Input('ckeditor_presets[-1][name]')));
+			$template->appendChild(Widget::Label(__('Toolbar'), Widget::Textarea('ckeditor_presets[-1][toolbar]', 5, 50)));
+			$template->appendChild(Widget::Label(__('Plugins'), Widget::Textarea('ckeditor_presets[-1][plugins]', 5, 50)));
+			$template->appendChild(Widget::Label(__('%s Enable resizing', array(Widget::Input('ckeditor_presets[-1][resize]', 'yes', 'checkbox')->generate()))));
+			$template->appendChild(Widget::Label(__('%s Show outline blocks', array(Widget::Input('ckeditor_presets[-1][outline]', 'yes', 'checkbox')->generate()))));
+
+			$ol->appendChild($template);
+
+			// Append all the fields:
+			$presets = Symphony::Database()->fetch('SELECT * FROM `tbl_ckeditor_presets');
+			$index   = 0;
+			foreach($presets as $preset)
+			{
+				$template = new XMLElement('li');
+				$template->appendChild(new XMLElement('header', '<h3>'.$preset['name'].'</h3>'));
+				$template->appendChild(Widget::Label(__('Name'), Widget::Input('ckeditor_presets['.$index.'][name]', $preset['name'])));
+				$template->appendChild(Widget::Label(__('Toolbar'),
+					Widget::Textarea('ckeditor_presets['.$index.'][toolbar]', 5, 50, $preset['toolbar'])));
+				$template->appendChild(Widget::Label(__('Plugins'),
+					Widget::Textarea('ckeditor_presets['.$index.'][plugins]', 5, 50, $preset['plugins'])));
+				$template->appendChild(Widget::Label(__('%s Enable resizing',
+					array(Widget::Input('ckeditor_presets['.$index.'][resize]', '1', 'checkbox',
+						($preset['resize'] == 1 ? array('checked'=>'checked') : null)
+					)->generate()))));
+				$template->appendChild(Widget::Label(__('%s Show outline blocks',
+					array(Widget::Input('ckeditor_presets['.$index.'][outline]', '1', 'checkbox',
+						($preset['outline'] == 1 ? array('checked'=>'checked') : null)
+					)->generate()))));
+				$ol->appendChild($template);
+				$index++;
+			}
+
+			$fieldset->appendChild($ol);
+
 			// Styles:
 			$fieldset->appendChild(new XMLElement('p', __('Styles: (one style per line: <code>h3.example { color: #f00; background: #0f0; }</code>) Class name is converted to name (h3.hello-world = Hello World).'), array('class'=>'label')));
 			$textarea = Widget::Textarea('ckeditor[styles]', 5, 50, Symphony::Configuration()->get('styles', 'ckeditor'));
@@ -203,7 +245,6 @@
             $wrapper->appendChild($divgroup);
 
             return $wrapper;
-
         }
 		
 		/**
@@ -252,6 +293,27 @@
 				Symphony::Configuration()->remove('styles', 'ckeditor');
 				Symphony::Configuration()->write();
 			}
+			// Presets:
+			if(isset($_POST['ckeditor_presets']))
+			{
+				// Delete formatter references from DB:
+				Symphony::Database()->query("DELETE FROM `tbl_ckeditor_presets`");
+
+				// Delete formatter files:
+				$formatters = glob(EXTENSIONS.'/ckeditor/text-formatters/formatter.*.php');
+				foreach($formatters as $formatter) { unlink($formatter); }
+
+				// Create it all new:
+				foreach($_POST['ckeditor_presets'] as $preset)
+				{
+					Symphony::Database()->insert($preset, 'tbl_ckeditor_presets');
+					// Create text formatter file:
+					$str = file_get_contents(EXTENSIONS.'/ckeditor/text-formatters/template.ckeditor.php');
+					$handle = 'ckeditor_'.General::createHandle($preset['name'], 255, '_');
+					$str = str_replace(array('{{NAME}}', '{{HANDLE}}'), array($preset['name'], $handle), $str);
+					file_put_contents(EXTENSIONS.'/ckeditor/text-formatters/formatter.'.$handle.'.php', $str);
+				}
+			}
 		}
 
         /**
@@ -271,6 +333,17 @@
                 PRIMARY KEY (`id`)
                 )
     		");
+
+			Symphony::Database()->query("
+				CREATE TABLE IF NOT EXISTS `tbl_ckeditor_presets` (
+				`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+				`name` VARCHAR( 255 ) NOT NULL ,
+				`toolbar` TEXT NULL ,
+				`plugins` TEXT NULL ,
+				`resize` INT( 1 ) NULL ,
+				`ouline` INT( 1 ) NULL
+				) ENGINE = MYISAM ;
+			");
         }
 
         /**
@@ -279,7 +352,7 @@
 		 */
         public function update($prevVersion)
         {
-            if(version_compare($prevVersion, '1.2.4', '<'))
+            if(version_compare($prevVersion, '1.4', '<'))
             {
                 $this->install();
             }
@@ -293,6 +366,7 @@
 			Symphony::Configuration()->remove('sections', 'ckeditor');
 			Administration::instance()->saveConfig();
             Symphony::Database()->query("DROP TABLE `tbl_ckeditor_link_templates`");
+			Symphony::Database()->query("DROP TABLE `tbl_ckeditor_presets`");
 		}
 		
 		/**
@@ -302,16 +376,29 @@
 		 */
 		public function applyCKEditor($context) {
 
-			$format = $context['field']->get('text_formatter') == TRUE ? 'text_formatter' : 'formatter';
+/*			$format = $context['field']->get('text_formatter') == TRUE ? 'text_formatter' : 'formatter';
 
-			if(($context['field']->get($format) != 'ckeditor' && $context['field']->get($format) != 'ckeditor_compact')) return;
+			if(($context['field']->get($format) != 'ckeditor' && $context['field']->get($format) != 'ckeditor_compact')) return;*/
 			
 			if(!$this->addedCKEditorHeaders){
 				Administration::instance()->Page->addScriptToHead(URL . '/extensions/ckeditor/lib/ckeditor/ckeditor.js', 200, false);
 				Administration::instance()->Page->addScriptToHead(URL . '/symphony/extension/ckeditor/js/', 209, false);
 				Administration::instance()->Page->addScriptToHead(URL . '/extensions/ckeditor/assets/symphony.ckeditor.js', 210, false);
 				Administration::instance()->Page->addStylesheetToHead(URL . '/extensions/ckeditor/assets/symphony.ckeditor.css', 'screen', 30);
-				
+
+				$js = 'var ckeditor_presets = [];';
+				$presets = Symphony::Database()->fetch('SELECT * FROM `tbl_ckeditor_presets`;');
+				foreach($presets as $preset)
+				{
+					$js .= 'ckeditor_presets.push({name:"'.$preset['name'].'", class: "ckeditor_'.
+						General::createHandle($preset['name'], 255, '_').'", toolbar: ['.$preset['toolbar'].'], plugins: "'.
+						$preset['plugins'].'", resize: '.($preset['resize'] == 1 ? 'true' : 'false').', outline: '.
+						($preset['outline'] == 1 ? 'true' : 'false').'});'."\n";
+				}
+				$script = new XMLElement('script', $js, array('type'=>'text/javascript'));
+				Administration::instance()->Page->addElementToHead($script);
+
+
 				$this->addedCKEditorHeaders = true;
 			}
 		}

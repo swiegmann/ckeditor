@@ -3,8 +3,19 @@ jQuery(document).ready(function () {
     CKEDITOR.stylesSet.add('default', ckeditor_styles);
 
     // See if there are any ckeditor textareas:
-    jQuery('textarea.ckeditor, textarea.ckeditor_compact').each(function(index) {
+    jQuery('textarea[class^="ckeditor"]').each(function(index) {
         var $this = jQuery(this);
+
+        // Get the class name:
+        var classNames = this.className;
+        var myClassName = '';
+        var a = classNames.split(' ');
+        for(var i in a){
+            if(a[i].toString().indexOf('ckeditor') != -1)
+            {
+                myClassName = a[i];
+            }
+        }
 
         // Set the configurationdata:
         var ck_configurationData = {};
@@ -20,35 +31,20 @@ jQuery(document).ready(function () {
         ck_configurationData.height = jQuery(this).height();
         ck_configurationData.width = '100%'; // add some width to make up for the margins
 
-        // Check if this is the compact CKEditor:
-        if(jQuery(this).hasClass("ckeditor_compact"))
+        var formatBlock = ckeditor_styles.length > 0 ? ['Format', 'Styles', 'RemoveFormat'] : ['Format'];
+
+        // Set the correct preset:
+        for(var i in ckeditor_presets)
         {
-            jQuery(this).parent().addClass("ck_compact");
-            ck_configurationData.toolbar =
-            [
-                ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
-                ['Link', 'Unlink'],
-                ['Source']
-            ];
-            ck_configurationData.resize_enabled = false;
-            ck_configurationData.removePlugins = 'font,styles,elementspath';
-            ck_configurationData.startupOutlineBlocks = false;
-        } else {
-            jQuery(this).parent().addClass("ck_full");
-            var formatBlock = ckeditor_styles.length > 0 ? ['Format', 'Styles', 'RemoveFormat'] : ['Format'];
-            ck_configurationData.toolbar =
-            [
-                formatBlock,
-                ['Bold', 'Italic', 'Strike', '-', 'Subscript', 'Superscript'],
-                ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
-                ['Image', 'oembed'],['Link', 'Unlink'],
-                ['HorizontalRule'],
-                ['Source', 'Maximize']
-            ];
-            ck_configurationData.resize_enabled = true;
-            ck_configurationData.removePlugins = 'font,styles';
-            ck_configurationData.extraPlugins = 'oembed';
-            ck_configurationData.startupOutlineBlocks = true;
+            if(ckeditor_presets[i].class == myClassName)
+            {
+                var info = ckeditor_presets[i];
+                info.toolbar.unshift(formatBlock);
+                ck_configurationData.toolbar = info.toolbar;
+                ck_configurationData.resize_enabled = info.resize;
+                ck_configurationData.startupOutlineBlocks = info.outline;
+                ck_configurationData.extraPlugins = info.plugins;
+            }
         }
 
         // Set the objectname:
@@ -74,7 +70,7 @@ jQuery(document).ready(function () {
         });
 
         //Stop CKEditor creating another instance
-        jQuery(this).removeClass('ckeditor ckeditor_compact');
+        jQuery(this).removeClass(myClassName);
 
         // Replace CKEditor instances:
         CKEDITOR.replace(objectName, ck_configurationData);

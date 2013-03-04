@@ -1,7 +1,5 @@
 # CKEditor for Symphony CMS
 
-_CKEditor version: 3.6.3_
-
 ## Introduction
 
 This extension provides [CKEditor](http://ckeditor.com/) as text-formatter for Symphony CMS. It also has an integrated file browser which uses Symphony sections to get it's files from.
