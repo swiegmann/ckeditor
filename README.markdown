@@ -11,7 +11,7 @@ It is based upon code found in [Nils H&ouml;rrmann's WYMEditor](http://github.co
 
 Significant work and bug fixes have been contributed by the following users:
 
- * Giel Berkers - <http://github.com/kanduvisla> contributed major clean-ups and a new Symphony file browser that is compatible with CKEditor;
+ * Twisted Interactive - <http://github.com/TwistedInteractive> contributed major clean-ups and a new Symphony file browser that is compatible with CKEditor;
  * Rob Stanford - contributed bug fixes.
  
 For full details, please see the Github commit log - <http://github.com/tonyarnold/symphony-ckeditor/commits/master>.
