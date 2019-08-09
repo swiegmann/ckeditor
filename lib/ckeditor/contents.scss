@@ -1,0 +1,193 @@
+// Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+// For licensing, see LICENSE.md or http://ckeditor.com/license
+
+@function pow($number, $exponent) {
+	$value: 1;
+
+	@if $exponent > 0 {
+		@for $i from 1 through $exponent {
+			$value: $value * $number;
+		}
+	}
+
+	@return $value;
+}
+
+
+/// toFixed() function in Sass
+/// https://css-tricks.com/snippets/sass/fix-number-n-digits/
+/// @author Hugo Giraudel
+/// @param {Number} $float - Number to format
+/// @param {Number} $digits [2] - Number of digits to leave
+/// @return {Number}
+@function to-fixed($float, $digits: 3) {
+	$sass-precision: 5;
+	@if $digits > $sass-precision {
+		@warn "Sass sets default precision to #{$sass-precision} digits, and there is no way to change that for now.";
+		// + "The returned number will have #{$sass-precision} digits, even if you asked for `#{$digits}`."
+		// + "See https://github.com/sass/sass/issues/1122 for further informations."
+	}
+	$pow: pow(10, $digits);
+	@return round($float * $pow) / $pow;
+}
+
+@function px-to-rem($px) {
+	@return +to-fixed($px * 1 / 16);
+}
+
+$border-radius: px-to-rem(2);
+$transition-duration: 0.25s;
+$transition-function: cubic-bezier(0.17, 0.04, 0.03, 0.94);
+
+// $mq-low-1-min-width: 0px
+$mq-medium-min-width: 768px;
+$mq-large-min-width: 1024px;
+
+// Low (= Small Size):
+$mq-small: "(max-width: #{$mq-medium-min-width - 1px})";
+$mq-medium: "(min-width: #{$mq-medium-min-width}) and (max-width: #{$mq-large-min-width - 1px})";
+$mq-large: "(min-width: #{$mq-large-min-width})";
+
+html {
+	font-size: 1rem;
+	// font-size: 1.16vw
+	&:not([class]) {
+		@media #{$mq-small} {
+			font-size: 2vw;
+		}
+		@media #{$mq-medium} {
+			font-size: 1.6vw;
+		}
+		@media #{$mq-large} {
+			font-size: 1rem;
+		}
+	}
+}
+
+body {
+	margin: 0;
+	padding: 0.438rem 0.625rem;
+	font-family: Roboto, -apple-system, BlinkMacSystemFont, "Open Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+	font-size: 1.063rem;
+	background-color: #fff;
+	color: #505050;
+	transition: color $transition-duration $transition-function;
+	&:hover {
+		color: #282828;
+	}
+	&:focus,
+	&:active {
+		color: #000;
+	}
+}
+
+.cke_editable {
+	font-size: 1.063rem;
+	line-height: 1.5;
+}
+
+blockquote {
+	font-style: italic;
+	font-family: Georgia, Times, "Times New Roman", serif;
+	padding: 2px 0;
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 0;
+}
+
+.cke_contents_ltr {
+	blockquote {
+		padding-left: 20px;
+		padding-right: 8px;
+		border-left-width: 5px;
+	}
+}
+
+.cke_contents_rtl {
+	blockquote {
+		padding-left: 8px;
+		padding-right: 20px;
+		border-right-width: 5px;
+	}
+}
+
+a {
+	color: #0782C1;
+}
+
+ol, ul, dl {
+	*margin-right: 0px;
+	padding: 0 40px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 1.4rem;
+	margin: 0 0 1rem 0;
+	padding: 0;
+}
+
+p {
+	margin: 0 0 1rem 0;
+	padding: 0;
+}
+
+hr {
+	border: 0px;
+	border-top: 1px solid #ccc;
+}
+
+// img
+// // &.right
+// 	// border: 1px solid #ccc
+// 	// float: right
+// 	// margin-left: 15px
+// 	// padding: 5px
+// // &.left
+// 	// border: 1px solid #ccc
+// 	// float: left
+// 	// margin-right: 15px
+// 	// padding: 5px
+
+pre {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	-webkit-tab-size: 4;
+	tab-size: 4;
+}
+
+.marker {
+	background-color: Yellow;
+}
+
+span[lang] {
+	font-style: italic;
+}
+
+figure {
+	text-align: center;
+	border: solid 1px #ccc;
+	border-radius: 2px;
+	background: rgba(0, 0, 0, 0.05);
+	padding: 10px;
+	margin: 10px 20px;
+	display: inline-block;
+	> figcaption {
+		text-align: center;
+		display: block;
+	}
+}
+
+a {
+	> img {
+		padding: 1px;
+		margin: 1px;
+		border: none;
+		outline: 1px solid #0782C1;
+	}
+}

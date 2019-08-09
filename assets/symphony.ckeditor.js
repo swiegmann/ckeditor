@@ -19,30 +19,36 @@ jQuery(document).ready(function () {
 
         // Set the configurationdata:
         var ck_configurationData = {};
-        ck_configurationData.language = 'en';
-        ck_configurationData.skin = 'moono';
+        ck_configurationData.language = 'de';
+      	ck_configurationData.allowedContent = 'h3; p; blockquote; ul; ol; li; a[href]; sup; strong; em; u; strike';
+        ck_configurationData.extraAllowedContent = 'section-img,section-gallery';
+        ck_configurationData.skin = 'moono'; // 'moono';
         ck_configurationData.replaceByClassEnabled = false;
         ck_configurationData.forcePasteAsPlainText = true;
-        ck_configurationData.format_tags = 'p;h1;h2;h3';
+        ck_configurationData.format_tags = 'h3;p';
         ck_configurationData.entities_processNumerical = 'force';
-        ck_configurationData.filebrowserBrowseUrl = Symphony.Context.get('root') + '/symphony/extension/ckeditor/filebrowser/';
+        // ck_configurationData.filebrowserBrowseUrl = Symphony.Context.get('root') + '/symphony/extension/ckeditor/filebrowser/';
+		ck_configurationData.filebrowserBrowseUrl = '';
+		ck_configurationData.filebrowserImageBrowseUrl = '';
+		ck_configurationData.filebrowserFlashBrowseUrl = '';   
 
         // Set the correct height and width:
         ck_configurationData.height = jQuery(this).height();
-        ck_configurationData.width = '100%'; // add some width to make up for the margins
+        // ck_configurationData.width = '100%'; // add some width to make up for the margins
 
-        var formatBlock = ckeditor_styles.length > 0 ? ['Format', 'Styles', 'RemoveFormat'] : ['Format'];
+        // var formatBlock = ckeditor_styles.length > 0 ? ['Format', 'Styles', 'RemoveFormat'] : ['Format'];
 
         // Set the correct preset:
         for(var i in ckeditor_presets)
         {
             if(ckeditor_presets[i].class == myClassName)
             {
-                var info = ckeditor_presets[i];
-                info.toolbar.unshift(formatBlock);
+                //var info = ckeditor_presets[i];
+                var info = jQuery.extend(true, {}, ckeditor_presets[i]);
+                // info.toolbar.unshift(formatBlock);
                 ck_configurationData.toolbar = info.toolbar;
                 ck_configurationData.resize_enabled = info.resize;
-                ck_configurationData.startupOutlineBlocks = info.outline;
+                // ck_configurationData.startupOutlineBlocks = info.outline;
                 ck_configurationData.extraPlugins = info.plugins;
             }
         }
@@ -52,7 +58,7 @@ jQuery(document).ready(function () {
 
         // Do not add linebreaks and spaces after opening and before closing tags.
         CKEDITOR.on('instanceReady', function(ev){
-            var tags = ['p', 'ol', 'ul', 'li']; // etc.
+            var tags = ['p', 'ol', 'ul'/*, 'li'*/]; // etc.
             for (var key in tags) {
                 ev.editor.dataProcessor.writer.setRules(tags[key],
                 {
@@ -60,7 +66,7 @@ jQuery(document).ready(function () {
                     breakBeforeOpen : true,
                     breakAfterOpen : false,
                     breakBeforeClose : false,
-                    breakAfterClose : true
+                    breakAfterClose : false
                 });
             }
             // Add a border:

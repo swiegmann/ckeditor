@@ -3,7 +3,7 @@
 
 	Class contentExtensionCkeditorJs extends AdministrationPage
 	{
-		function build()
+		function build(array $context = array())
 		{
 			if(!$this->canAccessPage()){
 				$this->_Parent->customError(E_USER_ERROR, __('Access Denied'), __('You are not authorised to access this page.'));
