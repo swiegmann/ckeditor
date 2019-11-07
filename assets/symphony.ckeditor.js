@@ -1,6 +1,8 @@
 jQuery(document).ready(function () {
     // Add custom styles:
-    CKEDITOR.stylesSet.add('default', ckeditor_styles);
+    if (typeof ckeditor_styles !== "undefined") {
+      CKEDITOR.stylesSet.add('default', ckeditor_styles);
+    }
 
     // See if there are any ckeditor textareas:
     jQuery('textarea[class*="ckeditor"]').each(function(index) {
@@ -30,7 +32,7 @@ jQuery(document).ready(function () {
         // ck_configurationData.filebrowserBrowseUrl = Symphony.Context.get('root') + '/symphony/extension/ckeditor/filebrowser/';
 		ck_configurationData.filebrowserBrowseUrl = '';
 		ck_configurationData.filebrowserImageBrowseUrl = '';
-		ck_configurationData.filebrowserFlashBrowseUrl = '';   
+		ck_configurationData.filebrowserFlashBrowseUrl = '';
 
         // Set the correct height and width:
         ck_configurationData.height = jQuery(this).height();
