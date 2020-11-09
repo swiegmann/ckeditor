@@ -1,5 +1,9 @@
 # CKEditor for Symphony CMS
 
+## CKEditor5 Support (not CKFinder-Approved)
+
+
+
 ## Introduction
 
 This extension provides [CKEditor](http://ckeditor.com/) as text-formatter for Symphony CMS. It also has an integrated file browser which uses Symphony sections to get it's files from.
@@ -13,7 +17,7 @@ Significant work and bug fixes have been contributed by the following users:
 
  * Twisted Interactive - <http://github.com/TwistedInteractive> contributed major clean-ups and a new Symphony file browser that is compatible with CKEditor;
  * Rob Stanford - contributed bug fixes.
- 
+
 For full details, please see the Github commit log - <http://github.com/tonyarnold/symphony-ckeditor/commits/master>.
 
 ## Special notes
