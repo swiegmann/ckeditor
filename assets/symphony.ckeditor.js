@@ -1,5 +1,7 @@
 jQuery(document).ready(function () {
   jQuery('textarea[class*="ckeditor"]').each(function(index) {
+    var el = this;
+
     var classNames = this.className,
       myClassName = '',
       a = classNames.split(' ');
@@ -33,7 +35,25 @@ jQuery(document).ready(function () {
     //Stop CKEditor creating another instance
     jQuery(this).removeClass(myClassName);
 
+
+    // Handling special characters, such as nbsp's (Part I)
+    var fnCKEditorCleanup = function(s) {
+      s = s.replace(/&nbsp;{1,}/g, " ");
+      s = s.replace(/\s{2,}/g, " ");
+
+      return s;
+    }
+
+    el.value = fnCKEditorCleanup(el.value);
+
+
     // CreateEditor
     ClassicEditor.create(this, ckCfg);
+
+
+    // Handling special characters, such as nbsp's: (Part II)
+    document.querySelector('form[role="form"]').addEventListener("submit", function() {
+      el.value = fnCKEditorCleanup(el.value)
+    });
   });
 });
